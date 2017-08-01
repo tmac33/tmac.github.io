@@ -27,4 +27,8 @@ branches:
     - blog-source
 env:
  global:
+<<<<<<< HEAD
    - GH_REF: git@github.com:tmac33/tmac33.github.io.git
+=======
+   - GH_REF: git@github.com:tmac33/tmac33.github.io.git
+>>>>>>> 99e96c3054194c7ba074d5de5a2d10d71d49bba0
