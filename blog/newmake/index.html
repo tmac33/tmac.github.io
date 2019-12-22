@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="转载自飞雪无情
+ Go语言中new和make是内建的两个函数，主要用来创建分配类型内存。在我们定义生成变量的时候，可能会觉得有点迷惑，其实他们的规则很简单，下面我们就通过一些示例说明他们的区别和使用。
+变量的声明 var i int var s string  变量的声明我们可以通过var关键字，然后就可以在程序中使用。当我们不指定变量的默认值时，这些变量的默认值是他们的零值，比如int类型的零值是0,string类型的零值是&amp;rdquo;&amp;ldquo;，引用类型的零值是nil。
+对于例子中的两种类型的声明，我们可以直接使用，对其进行赋值输出。但是如果我们换成引用类型呢？
+package main import ( &amp;quot;fmt&amp;quot; ) func main() { var i *int *i=10 fmt.Println(*i) }  这个例子会打印出什么？0还是10?。以上全错，运行的时候会painc，如下：
+ panic: runtime error: invalid memory address or nil pointer dereference
+ 从这个提示中可以看出，对于引用类型的变量，我们不光要声明它，还要为它分配内容空间，否则我们的值放在哪里去呢？这就是上面错误提示的原因。
+对于值类型的声明不需要，是因为已经默认帮我们分配好了。
+要分配内存，就引出来今天的new和make。
+new 对于上面的问题我们如何解决呢？既然我们知道了没有为其分配内存，那么我们使用new分配一个吧。
+func main() { var i *int i=new(int) *i=10 fmt.Println(*i) }  现在再运行程序，完美PASS，打印10。现在让我们看下new这个内置的函数。
+// The new built-in function allocates memory. The first argument is a type, // not a value, and the value returned is a pointer to a newly // allocated zero value of that type." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/newmake/" />
+
+
+<title>
+    
+    区分new与make :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="区分new与make">
+<meta itemprop="description" content="转载自飞雪无情
+ Go语言中new和make是内建的两个函数，主要用来创建分配类型内存。在我们定义生成变量的时候，可能会觉得有点迷惑，其实他们的规则很简单，下面我们就通过一些示例说明他们的区别和使用。
+变量的声明 var i int var s string  变量的声明我们可以通过var关键字，然后就可以在程序中使用。当我们不指定变量的默认值时，这些变量的默认值是他们的零值，比如int类型的零值是0,string类型的零值是&rdquo;&ldquo;，引用类型的零值是nil。
+对于例子中的两种类型的声明，我们可以直接使用，对其进行赋值输出。但是如果我们换成引用类型呢？
+package main import ( &quot;fmt&quot; ) func main() { var i *int *i=10 fmt.Println(*i) }  这个例子会打印出什么？0还是10?。以上全错，运行的时候会painc，如下：
+ panic: runtime error: invalid memory address or nil pointer dereference
+ 从这个提示中可以看出，对于引用类型的变量，我们不光要声明它，还要为它分配内容空间，否则我们的值放在哪里去呢？这就是上面错误提示的原因。
+对于值类型的声明不需要，是因为已经默认帮我们分配好了。
+要分配内存，就引出来今天的new和make。
+new 对于上面的问题我们如何解决呢？既然我们知道了没有为其分配内存，那么我们使用new分配一个吧。
+func main() { var i *int i=new(int) *i=10 fmt.Println(*i) }  现在再运行程序，完美PASS，打印10。现在让我们看下new这个内置的函数。
+// The new built-in function allocates memory. The first argument is a type, // not a value, and the value returned is a pointer to a newly // allocated zero value of that type.">
+
+
+<meta itemprop="datePublished" content="2019-07-10T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-07-10T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="135">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="区分new与make"/>
+<meta name="twitter:description" content="转载自飞雪无情
+ Go语言中new和make是内建的两个函数，主要用来创建分配类型内存。在我们定义生成变量的时候，可能会觉得有点迷惑，其实他们的规则很简单，下面我们就通过一些示例说明他们的区别和使用。
+变量的声明 var i int var s string  变量的声明我们可以通过var关键字，然后就可以在程序中使用。当我们不指定变量的默认值时，这些变量的默认值是他们的零值，比如int类型的零值是0,string类型的零值是&rdquo;&ldquo;，引用类型的零值是nil。
+对于例子中的两种类型的声明，我们可以直接使用，对其进行赋值输出。但是如果我们换成引用类型呢？
+package main import ( &quot;fmt&quot; ) func main() { var i *int *i=10 fmt.Println(*i) }  这个例子会打印出什么？0还是10?。以上全错，运行的时候会painc，如下：
+ panic: runtime error: invalid memory address or nil pointer dereference
+ 从这个提示中可以看出，对于引用类型的变量，我们不光要声明它，还要为它分配内容空间，否则我们的值放在哪里去呢？这就是上面错误提示的原因。
+对于值类型的声明不需要，是因为已经默认帮我们分配好了。
+要分配内存，就引出来今天的new和make。
+new 对于上面的问题我们如何解决呢？既然我们知道了没有为其分配内存，那么我们使用new分配一个吧。
+func main() { var i *int i=new(int) *i=10 fmt.Println(*i) }  现在再运行程序，完美PASS，打印10。现在让我们看下new这个内置的函数。
+// The new built-in function allocates memory. The first argument is a type, // not a value, and the value returned is a pointer to a newly // allocated zero value of that type."/>
+
+
+
+
+<meta property="article:published_time" content="2019-07-10 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/newmake/">区分new与make</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<blockquote>
+<p>转载自<a href="https://www.flysnow.org/2017/10/23/go-new-vs-make.html">飞雪无情</a></p>
+</blockquote>
+
+<p>Go语言中new和make是内建的两个函数，主要用来创建分配类型内存。在我们定义生成变量的时候，可能会觉得有点迷惑，其实他们的规则很简单，下面我们就通过一些示例说明他们的区别和使用。</p>
+
+<h1 id="变量的声明">变量的声明</h1>
+
+<pre><code class="language-go">var i int
+var s string
+</code></pre>
+
+<p>变量的声明我们可以通过var关键字，然后就可以在程序中使用。当我们不指定变量的默认值时，这些变量的默认值是他们的零值，比如int类型的零值是0,string类型的零值是&rdquo;&ldquo;，引用类型的零值是nil。</p>
+
+<p>对于例子中的两种类型的声明，我们可以直接使用，对其进行赋值输出。但是如果我们换成引用类型呢？</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+)
+
+func main() {
+    var i *int
+    *i=10
+    fmt.Println(*i)
+
+}
+</code></pre>
+
+<p>这个例子会打印出什么？0还是10?。以上全错，运行的时候会painc，如下：</p>
+
+<blockquote>
+<p>panic: runtime error: invalid memory address or nil pointer dereference</p>
+</blockquote>
+
+<p>从这个提示中可以看出，对于引用类型的变量，我们不光要声明它，还要为它分配内容空间，否则我们的值放在哪里去呢？这就是上面错误提示的原因。</p>
+
+<p>对于值类型的声明不需要，是因为已经默认帮我们分配好了。</p>
+
+<p>要分配内存，就引出来今天的new和make。</p>
+
+<h1 id="new">new</h1>
+
+<p>对于上面的问题我们如何解决呢？既然我们知道了没有为其分配内存，那么我们使用new分配一个吧。</p>
+
+<pre><code class="language-go">func main() {
+    var i *int
+    i=new(int)
+    *i=10
+    fmt.Println(*i)
+
+}
+</code></pre>
+
+<p>现在再运行程序，完美PASS，打印10。现在让我们看下new这个内置的函数。</p>
+
+<pre><code class="language-go">// The new built-in function allocates memory. The first argument is a type,
+// not a value, and the value returned is a pointer to a newly
+// allocated zero value of that type.
+func new(Type) *Type
+</code></pre>
+
+<p>它只接受一个参数，这个参数是一个类型，分配好内存后，返回一个指向该类型内存地址的指针。同时请注意它同时把分配的内存置为零，也就是类型的零值。</p>
+
+<p>我们的例子中，如果没有*i=10，那么打印的就是0。这里体现不出来new函数这种内存置为零的好处，我们再看一个例子。</p>
+
+<pre><code class="language-go">func main() {
+    u:=new(user)
+    u.lock.Lock()
+    u.name = &quot;张三&quot;
+    u.lock.Unlock()
+
+    fmt.Println(u)
+
+}
+
+type user struct {
+    lock sync.Mutex
+    name string
+    age int
+}
+</code></pre>
+
+<p>示例中的user类型中的lock字段我不用初始化，直接可以拿来用，不会有无效内存引用异常，因为它已经被零值了。</p>
+
+<p>这就是new，它返回的永远是类型的指针，指向分配类型的内存地址。</p>
+
+<h1 id="make">make</h1>
+
+<p>make也是用于内存分配的，但是和new不同，它只用于chan、map以及切片的内存创建，而且它返回的类型就是这三个类型本身，而不是他们的指针类型，因为这三种类型就是引用类型，所以就没有必要返回他们的指针了。</p>
+
+<p>注意，因为这三种类型是引用类型，所以必须得初始化，但是不是置为零值，这个和new是不一样的。</p>
+
+<pre><code class="language-go">func make(t Type, size ...IntegerType) Type
+</code></pre>
+
+<p>从函数声明中可以看到，返回的还是该类型。</p>
+
+<h1 id="二者异同">二者异同</h1>
+
+<p>所以从这里可以看的很明白了，二者都是内存的分配（堆上），但是make只用于slice、map以及channel的初始化（非零值）；而new用于类型的内存分配，并且内存置为零。所以在我们编写程序的时候，就可以根据自己的需要很好的选择了。</p>
+
+<p>make返回的还是这三个引用类型本身；而new返回的是指向类型的指针。</p>
+
+<h1 id="其实new不常用">其实new不常用</h1>
+
+<p>所以有new这个内置函数，可以给我们分配一块内存让我们使用，但是现实的编码中，它是不常用的。我们通常都是采用短语句声明以及结构体的字面量达到我们的目的，比如：</p>
+
+<pre><code class="language-go">i:=0
+u:=user{}
+</code></pre>
+
+<p>这样更简洁方便，而且不会涉及到指针这种比麻烦的操作。</p>
+
+<p>make函数是无可替代的，我们在使用slice、map以及channel的时候，还是要使用make进行初始化，然后才才可以对他们进行操作。</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

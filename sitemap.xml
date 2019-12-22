@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/blog/</loc>
+    <lastmod>2019-07-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2019-07-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/blog/dfsbfs/</loc>
+    <lastmod>2019-07-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/newmake/</loc>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/defer/</loc>
+    <lastmod>2019-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/restful/</loc>
+    <lastmod>2019-06-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/sqrtx/</loc>
+    <lastmod>2019-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/fileoperator/</loc>
+    <lastmod>2019-06-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/remdom/</loc>
+    <lastmod>2019-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/go_type_assertion/</loc>
+    <lastmod>2019-05-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/structgo/</loc>
+    <lastmod>2019-05-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/essay20190529/</loc>
+    <lastmod>2019-05-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/elegantchannel/</loc>
+    <lastmod>2019-04-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/jwt/</loc>
+    <lastmod>2019-02-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/showcase/</loc>
+    <lastmod>2019-02-02T11:34:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/</loc>
+    <lastmod>2019-01-19T02:42:30+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/gitdeletecommand/</loc>
+    <lastmod>2018-11-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/golangcontext/</loc>
+    <lastmod>2018-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/objects-and-arrays/</loc>
+    <lastmod>2018-07-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/first-post-the-pledge/</loc>
+    <lastmod>2018-07-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/acknowledgefuncinit/</loc>
+    <lastmod>2018-06-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/testtrivis/</loc>
+    <lastmod>2017-08-01T22:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/essay-20170730/</loc>
+    <lastmod>2017-07-30T23:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/gpucoding/</loc>
+    <lastmod>2017-07-27T22:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/rip/</loc>
+    <lastmod>2017-07-21T12:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/essay-20170720/</loc>
+    <lastmod>2017-07-20T23:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/eulersequation/</loc>
+    <lastmod>2017-07-19T01:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/time/</loc>
+    <lastmod>2017-07-18T22:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/adaptionlocation/</loc>
+    <lastmod>2017-07-14T06:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/gangrenboqi/</loc>
+    <lastmod>2017-07-12T21:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/homogeneoucoordinates/</loc>
+    <lastmod>2017-07-11T01:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/npm/</loc>
+    <lastmod>2017-07-04T22:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/matrix-/</loc>
+    <lastmod>2017-07-03T03:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/fireroad/</loc>
+    <lastmod>2017-04-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/oopproperty/</loc>
+    <lastmod>2016-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/essay-20160925/</loc>
+    <lastmod>2016-09-25T23:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/breakcontinue/</loc>
+    <lastmod>2016-05-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/matrix_go/</loc>
+    <lastmod>2015-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/queuearry/</loc>
+    <lastmod>2015-06-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/interfacesummary/</loc>
+    <lastmod>2015-05-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/iclj/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

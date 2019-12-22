@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="欧拉方程的发现 首先，来看看该指数函数的泰勒级数表示，E 1 X和三角函数，正弦，的sin（x）余弦，COS（x）的。 比较cos（x）&#43; sin（x）用E 1 X。通知cos（x）&#43; sin（x）几乎与泰勒系列相同 E 1 X; 系列中的所有术语与标志完全相同。如你所知，指数函数E 1 X随着输入x的增长而呈指数增长。但是，这是什么指数函数具有周期性（振荡）函数来执行，COS（x）的和的sin（x）？
+数学家们试图找出指数函数与2个振荡函数之和之间的奇怪关系。最后，Leonhard Euler完成了这个关系，将虚数，我进入上面的泰勒系列; E 1 {IX}而不是E 1 X而cos（x）&#43; isin（x）不是cos（x）&#43; sin（x）。
+现在，我们找到E 1 {IX}等于cos（x）&#43; isin（x），这被称为欧拉方程。
+欧拉方程图 我们知道指数函数E 1 X随x增长而呈指数增长。但是，这个功能是E 1 {IX}什么样的？
+以下图像显示了复数指数函数的图复指数函数，e ^ {ix}，通过绘制E 1 {IX}3D复合空间（x-实 - 虚轴）中的泰勒级数。令人惊讶的是，它是螺旋弹簧（线圈）形状，围绕单位圆旋转。并且，当投影到实数（顶视图）和虚数轴（侧视图）时，它成为三角函数，分别是余弦和正弦。
+图表
+实数部分
+虚数部分
+复数指数函数的图形表示复指数函数，e ^ {ix}清楚地显示了与三角函数的关系; 实数的复指数函数，e ^ {ix}余数是余弦，虚部的复指数函数，e ^ {ix}正弦函数与二皮弧度的周期。
+这是一个交互式OpenGL应用程序，用于绘制复指数函数，e ^ {ix}3D中的复数指数函数。
+欧拉方程含义 当图形复指数函数，e ^ {ix}投影到复平面时，该功能复指数函数，e ^ {ix}在单位圆上进行跟踪。这是周期性的功能二皮。
+这意味着提高数学常数，例如到虚数的幂九产生具有以弧度表示的角度x的复数。这种极性形式复指数函数，e ^ {ix}对于表示旋转对象或周期信号非常方便，因为它可以仅在单个术语而不是两个术语中表示复平面中的点a &#43; ib。此外，它简化了在乘法中使用的数学，例如。
+复杂的指数形式经常用于电气工程和物理学。例如，周期性信号可以表示傅立叶分析中的正弦和余弦函数的和，并且附加到弦的质量的运动也是正弦的。这些正弦函数可以用复数指数形式来代替，以便更简单的计算。
+幅度（norm），| z | 的复数是一个标量值，可以通过使用指数和对数定律来重写：" />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/eulersequation/" />
+
+
+<title>
+    
+    欧拉方程 :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="欧拉方程">
+<meta itemprop="description" content="欧拉方程的发现 首先，来看看该指数函数的泰勒级数表示，E 1 X和三角函数，正弦，的sin（x）余弦，COS（x）的。 比较cos（x）&#43; sin（x）用E 1 X。通知cos（x）&#43; sin（x）几乎与泰勒系列相同 E 1 X; 系列中的所有术语与标志完全相同。如你所知，指数函数E 1 X随着输入x的增长而呈指数增长。但是，这是什么指数函数具有周期性（振荡）函数来执行，COS（x）的和的sin（x）？
+数学家们试图找出指数函数与2个振荡函数之和之间的奇怪关系。最后，Leonhard Euler完成了这个关系，将虚数，我进入上面的泰勒系列; E 1 {IX}而不是E 1 X而cos（x）&#43; isin（x）不是cos（x）&#43; sin（x）。
+现在，我们找到E 1 {IX}等于cos（x）&#43; isin（x），这被称为欧拉方程。
+欧拉方程图 我们知道指数函数E 1 X随x增长而呈指数增长。但是，这个功能是E 1 {IX}什么样的？
+以下图像显示了复数指数函数的图复指数函数，e ^ {ix}，通过绘制E 1 {IX}3D复合空间（x-实 - 虚轴）中的泰勒级数。令人惊讶的是，它是螺旋弹簧（线圈）形状，围绕单位圆旋转。并且，当投影到实数（顶视图）和虚数轴（侧视图）时，它成为三角函数，分别是余弦和正弦。
+图表
+实数部分
+虚数部分
+复数指数函数的图形表示复指数函数，e ^ {ix}清楚地显示了与三角函数的关系; 实数的复指数函数，e ^ {ix}余数是余弦，虚部的复指数函数，e ^ {ix}正弦函数与二皮弧度的周期。
+这是一个交互式OpenGL应用程序，用于绘制复指数函数，e ^ {ix}3D中的复数指数函数。
+欧拉方程含义 当图形复指数函数，e ^ {ix}投影到复平面时，该功能复指数函数，e ^ {ix}在单位圆上进行跟踪。这是周期性的功能二皮。
+这意味着提高数学常数，例如到虚数的幂九产生具有以弧度表示的角度x的复数。这种极性形式复指数函数，e ^ {ix}对于表示旋转对象或周期信号非常方便，因为它可以仅在单个术语而不是两个术语中表示复平面中的点a &#43; ib。此外，它简化了在乘法中使用的数学，例如。
+复杂的指数形式经常用于电气工程和物理学。例如，周期性信号可以表示傅立叶分析中的正弦和余弦函数的和，并且附加到弦的质量的运动也是正弦的。这些正弦函数可以用复数指数形式来代替，以便更简单的计算。
+幅度（norm），| z | 的复数是一个标量值，可以通过使用指数和对数定律来重写：">
+
+
+<meta itemprop="datePublished" content="2017-07-19T01:25:24&#43;00:00" />
+<meta itemprop="dateModified" content="2017-07-19T01:25:24&#43;00:00" />
+<meta itemprop="wordCount" content="109">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="欧拉方程"/>
+<meta name="twitter:description" content="欧拉方程的发现 首先，来看看该指数函数的泰勒级数表示，E 1 X和三角函数，正弦，的sin（x）余弦，COS（x）的。 比较cos（x）&#43; sin（x）用E 1 X。通知cos（x）&#43; sin（x）几乎与泰勒系列相同 E 1 X; 系列中的所有术语与标志完全相同。如你所知，指数函数E 1 X随着输入x的增长而呈指数增长。但是，这是什么指数函数具有周期性（振荡）函数来执行，COS（x）的和的sin（x）？
+数学家们试图找出指数函数与2个振荡函数之和之间的奇怪关系。最后，Leonhard Euler完成了这个关系，将虚数，我进入上面的泰勒系列; E 1 {IX}而不是E 1 X而cos（x）&#43; isin（x）不是cos（x）&#43; sin（x）。
+现在，我们找到E 1 {IX}等于cos（x）&#43; isin（x），这被称为欧拉方程。
+欧拉方程图 我们知道指数函数E 1 X随x增长而呈指数增长。但是，这个功能是E 1 {IX}什么样的？
+以下图像显示了复数指数函数的图复指数函数，e ^ {ix}，通过绘制E 1 {IX}3D复合空间（x-实 - 虚轴）中的泰勒级数。令人惊讶的是，它是螺旋弹簧（线圈）形状，围绕单位圆旋转。并且，当投影到实数（顶视图）和虚数轴（侧视图）时，它成为三角函数，分别是余弦和正弦。
+图表
+实数部分
+虚数部分
+复数指数函数的图形表示复指数函数，e ^ {ix}清楚地显示了与三角函数的关系; 实数的复指数函数，e ^ {ix}余数是余弦，虚部的复指数函数，e ^ {ix}正弦函数与二皮弧度的周期。
+这是一个交互式OpenGL应用程序，用于绘制复指数函数，e ^ {ix}3D中的复数指数函数。
+欧拉方程含义 当图形复指数函数，e ^ {ix}投影到复平面时，该功能复指数函数，e ^ {ix}在单位圆上进行跟踪。这是周期性的功能二皮。
+这意味着提高数学常数，例如到虚数的幂九产生具有以弧度表示的角度x的复数。这种极性形式复指数函数，e ^ {ix}对于表示旋转对象或周期信号非常方便，因为它可以仅在单个术语而不是两个术语中表示复平面中的点a &#43; ib。此外，它简化了在乘法中使用的数学，例如。
+复杂的指数形式经常用于电气工程和物理学。例如，周期性信号可以表示傅立叶分析中的正弦和余弦函数的和，并且附加到弦的质量的运动也是正弦的。这些正弦函数可以用复数指数形式来代替，以便更简单的计算。
+幅度（norm），| z | 的复数是一个标量值，可以通过使用指数和对数定律来重写："/>
+
+
+
+
+<meta property="article:published_time" content="2017-07-19 01:25:24 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/eulersequation/">欧拉方程</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="欧拉方程的发现">欧拉方程的发现</h1>
+
+<p>首先，来看看该指数函数的泰勒级数表示，E 1 X和三角函数，正弦，的sin（x）余弦，COS（x）的。
+<img src="http://osej1thz9.bkt.clouddn.com/static/images/euler02.png" alt="" /></p>
+
+<p>比较cos（x）+ sin（x）用E 1 X。通知cos（x）+ sin（x）几乎与泰勒系列相同  E 1 X; 系列中的所有术语与标志完全相同。如你所知，指数函数E 1 X随着输入x的增长而呈指数增长。但是，这是什么指数函数具有周期性（振荡）函数来执行，COS（x）的和的sin（x）？</p>
+
+<p>数学家们试图找出指数函数与2个振荡函数之和之间的奇怪关系。最后，Leonhard Euler完成了这个关系，将虚数，我进入上面的泰勒系列; E 1 {IX}而不是E 1 X而cos（x）+ isin（x）不是cos（x）+ sin（x）。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler03.png" alt="" /></p>
+
+<p>现在，我们找到E 1 {IX}等于cos（x）+ isin（x），这被称为欧拉方程。</p>
+
+<h1 id="欧拉方程图">欧拉方程图</h1>
+
+<p>我们知道指数函数E 1 X随x增长而呈指数增长。但是，这个功能是E 1 {IX}什么样的？</p>
+
+<p>以下图像显示了复数指数函数的图复指数函数，e ^ {ix}，通过绘制E 1 {IX}3D复合空间（x-实 - 虚轴）中的泰勒级数。令人惊讶的是，它是螺旋弹簧（线圈）形状，围绕单位圆旋转。并且，当投影到实数（顶视图）和虚数轴（侧视图）时，它成为三角函数，分别是余弦和正弦。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler04.png" alt="" /></p>
+
+<p><center>图表</center></p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler05.png" alt="" /></p>
+
+<p><center>实数部分</center></p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler06.png" alt="" /></p>
+
+<p><center>虚数部分</center></p>
+
+<p>复数指数函数的图形表示复指数函数，e ^ {ix}清楚地显示了与三角函数的关系; 实数的复指数函数，e ^ {ix}余数是余弦，虚部的复指数函数，e ^ {ix}正弦函数与二皮弧度的周期。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler07.gif" alt="" /></p>
+
+<p>这是一个交互式OpenGL应用程序，用于绘制复指数函数，e ^ {ix}3D中的复数指数函数。</p>
+
+<h1 id="欧拉方程含义">欧拉方程含义</h1>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler08.png" alt="" /></p>
+
+<p>当图形复指数函数，e ^ {ix}投影到复平面时，该功能复指数函数，e ^ {ix}在单位圆上进行跟踪。这是周期性的功能二皮。</p>
+
+<p>这意味着提高数学常数，例如到虚数的幂九产生具有以弧度表示的角度x的复数。这种极性形式复指数函数，e ^ {ix}对于表示旋转对象或周期信号非常方便，因为它可以仅在单个术语而不是两个术语中表示复平面中的点a + ib。此外，它简化了在乘法中使用的数学，例如。</p>
+
+<p>复杂的指数形式经常用于电气工程和物理学。例如，周期性信号可以表示傅立叶分析中的正弦和余弦函数的和，并且附加到弦的质量的运动也是正弦的。这些正弦函数可以用复数指数形式来代替，以便更简单的计算。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler09.png" alt="" /></p>
+
+<p>幅度（norm），| z | 的复数是一个标量值，可以通过使用指数和对数定律来重写：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler10.png" alt="" /></p>
+
+<p>我们可以扩展任何复数的极坐标形式表示。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler11.png" alt="" />
+<center>复数的极坐标形式</center></p>
+
+<h1 id="二维旋转与欧拉方程">二维旋转与欧拉方程</h1>
+
+<p>两个复数的乘法意味着2D空间中的旋转。
+看下图显示复合平面单位圆上的2个复数。
+当我们比较这两个复数时，我们注意到，虚拟指数形式的角度之和等于两个复数的乘积。它告诉我们，乘以通过执行回转与角度Φ。</p>
+
+<p>我们可以把它扩展到任何复数的任何复数。为了以一定角度Φ 旋转复数z = x + iy，我们简单地乘以数字。然后旋转的结果z&rsquo;变成。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler12.png" alt="" /></p>
+
+<p><center>乘法就是旋转</center></p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler13.png" alt="" /></p>
+
+<p><center>复数的二维旋转</center></p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler14.png" alt="" /></p>
+
+<p>如果我们通过省略重写它作为一个矩阵形式，它就成为我们熟悉的2×2旋转矩阵。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler15.png" alt="" /></p>
+
+<h1 id="欧拉恒等式">欧拉恒等式</h1>
+
+<p>如果我们将该值代入欧拉方程，那么我们得到：
+<img src="http://osej1thz9.bkt.clouddn.com/static/images/euler16.png" alt="" /></p>
+
+<p>这个方程称为欧拉识别，显示5个基本数学常数之间的联系; 0,1， ，PI，Ë和一世。</p>
+
+<p>对数函数仅针对域x &gt; 0 定义。但是，欧拉标识允许通过将指数转换为对数形式来定义负x的对数：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler17.png" alt="" /></p>
+
+<p>如果我们替代欧拉方程，那么我们得到：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler18.png" alt="" /></p>
+
+<p>然后提高双方的权</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler19.png" alt="" /></p>
+
+<p>上面的方程告诉我们，实际上是一个实数（不是虚数）。</p>
+
+<h1 id="欧拉方程的证明">欧拉方程的证明</h1>
+
+<p>这是使用微积分的证明。我们从右边开始，其区别是：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler20.png" alt="" /></p>
+
+<p>修改上述公式：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler21.png" alt="" /></p>
+
+<p>将t移动到左侧，然后应用积分：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler22.png" alt="" /></p>
+
+<p>要找到常数C，替换x = 0：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler23.png" alt="" /></p>
+
+<p>现在我们知道C = 0，所以上面的等式是：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler24.png" alt="" /></p>
+
+<p>最后，将此对数形式转换为指数形式：</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/euler25.png" alt="" /></p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content=" 问题 在几何空间中，同一平面上的两条平行线不能相交，或者不会相遇，这是大家都知道的一个常识。 但是，在投影空间中就有了另一种见解，例如，你站在铁轨的一头，向另一头望去，铁轨是越来越窄的，最后，两条平行的轨道在地平线相遇，这是一个无限远的点。 笛卡尔空间描述了我们的2D / 3D几何形状，但它们不足以处理投影空间（实际上，欧氏几何是投影几何的一个子集）。2D点的直角坐标可以表示为（x，y）。
+如何理解无限远呢？
+无限远点为（∞，∞）， 在欧几里德空间中变得毫无意义。平行线应该在投影空间无限远地满足，但在欧几里德空间中无法做到。数学家已经发现了一个解决这个问题的方法。
+解决方案：齐次坐标 均匀坐标可以在投影空间中对图形和几何进行计算。均匀坐标是用N &#43; 1数字表示N维坐标的方式。
+为了使2D均匀坐标，我们只需在现有坐标中添加一个附加变量w即可。因此，在笛卡尔坐标（X，Y）中的点在均匀坐标中变为（x，y，w）。和X和Ÿ在笛卡尔与重新表示X，Y和W ^齐次的; X = x / w Y = y / w
+例如，均匀的笛卡尔（1,2）中的点变为（1，2，1）。如果一点，（1，2）， 向无穷远移动，在笛卡尔坐标中变为（∞，∞）。由于（1/0，2/0）≈（∞，∞），在均匀坐标中变为（1，2，0）。注意，我们可以在无穷远的情况下表达点，而不使用“∞”。
+为什么叫“齐次”？ 如前所述，为了将齐次坐标（x，y，w）转换为笛卡尔坐标，我们简单地将x和y除以w ;
+将齐次转换为笛卡儿，我们可以找到一个重要的事实。我们来看下面的例子。
+正如你所看到的，点（1,2,3），（2,4,6）和（4,8,12）对应于相同的欧几里德点（1/3,2/3）。任何标量积（1a，2a，3a）与欧几里德空间中的（1/3，2/3）相同。因此，这些点是“均匀的”，因为它们在欧氏空间（或笛卡尔空间）中代表相同的点。换句话说，齐次坐标是尺度不变量。
+证明：两条平行线可以相交 考虑欧几里德空间是线性;
+我们知道由于C≠D，上述方程式没有解决办法。 如果C = D，则两行相同（重叠）。
+我们通过将x和y分别替换为x / w，y / w来重写投影空间的方程。
+现在，我们有一个解（x，y，0），因为（C-D）w = 0，∴w = 0。因此，两个平行线在（x，y，0）处相交，这是无限远的点。
+齐次坐标是计算机图形中非常有用和基本的概念，例如将3D场景投影到2D平面上。 " />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/homogeneoucoordinates/" />
+
+
+<title>
+    
+    齐次坐标 :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="齐次坐标">
+<meta itemprop="description" content=" 问题 在几何空间中，同一平面上的两条平行线不能相交，或者不会相遇，这是大家都知道的一个常识。 但是，在投影空间中就有了另一种见解，例如，你站在铁轨的一头，向另一头望去，铁轨是越来越窄的，最后，两条平行的轨道在地平线相遇，这是一个无限远的点。 笛卡尔空间描述了我们的2D / 3D几何形状，但它们不足以处理投影空间（实际上，欧氏几何是投影几何的一个子集）。2D点的直角坐标可以表示为（x，y）。
+如何理解无限远呢？
+无限远点为（∞，∞）， 在欧几里德空间中变得毫无意义。平行线应该在投影空间无限远地满足，但在欧几里德空间中无法做到。数学家已经发现了一个解决这个问题的方法。
+解决方案：齐次坐标 均匀坐标可以在投影空间中对图形和几何进行计算。均匀坐标是用N &#43; 1数字表示N维坐标的方式。
+为了使2D均匀坐标，我们只需在现有坐标中添加一个附加变量w即可。因此，在笛卡尔坐标（X，Y）中的点在均匀坐标中变为（x，y，w）。和X和Ÿ在笛卡尔与重新表示X，Y和W ^齐次的; X = x / w Y = y / w
+例如，均匀的笛卡尔（1,2）中的点变为（1，2，1）。如果一点，（1，2）， 向无穷远移动，在笛卡尔坐标中变为（∞，∞）。由于（1/0，2/0）≈（∞，∞），在均匀坐标中变为（1，2，0）。注意，我们可以在无穷远的情况下表达点，而不使用“∞”。
+为什么叫“齐次”？ 如前所述，为了将齐次坐标（x，y，w）转换为笛卡尔坐标，我们简单地将x和y除以w ;
+将齐次转换为笛卡儿，我们可以找到一个重要的事实。我们来看下面的例子。
+正如你所看到的，点（1,2,3），（2,4,6）和（4,8,12）对应于相同的欧几里德点（1/3,2/3）。任何标量积（1a，2a，3a）与欧几里德空间中的（1/3，2/3）相同。因此，这些点是“均匀的”，因为它们在欧氏空间（或笛卡尔空间）中代表相同的点。换句话说，齐次坐标是尺度不变量。
+证明：两条平行线可以相交 考虑欧几里德空间是线性;
+我们知道由于C≠D，上述方程式没有解决办法。 如果C = D，则两行相同（重叠）。
+我们通过将x和y分别替换为x / w，y / w来重写投影空间的方程。
+现在，我们有一个解（x，y，0），因为（C-D）w = 0，∴w = 0。因此，两个平行线在（x，y，0）处相交，这是无限远的点。
+齐次坐标是计算机图形中非常有用和基本的概念，例如将3D场景投影到2D平面上。 ">
+
+
+<meta itemprop="datePublished" content="2017-07-11T01:25:24&#43;00:00" />
+<meta itemprop="dateModified" content="2017-07-11T01:25:24&#43;00:00" />
+<meta itemprop="wordCount" content="49">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="齐次坐标"/>
+<meta name="twitter:description" content=" 问题 在几何空间中，同一平面上的两条平行线不能相交，或者不会相遇，这是大家都知道的一个常识。 但是，在投影空间中就有了另一种见解，例如，你站在铁轨的一头，向另一头望去，铁轨是越来越窄的，最后，两条平行的轨道在地平线相遇，这是一个无限远的点。 笛卡尔空间描述了我们的2D / 3D几何形状，但它们不足以处理投影空间（实际上，欧氏几何是投影几何的一个子集）。2D点的直角坐标可以表示为（x，y）。
+如何理解无限远呢？
+无限远点为（∞，∞）， 在欧几里德空间中变得毫无意义。平行线应该在投影空间无限远地满足，但在欧几里德空间中无法做到。数学家已经发现了一个解决这个问题的方法。
+解决方案：齐次坐标 均匀坐标可以在投影空间中对图形和几何进行计算。均匀坐标是用N &#43; 1数字表示N维坐标的方式。
+为了使2D均匀坐标，我们只需在现有坐标中添加一个附加变量w即可。因此，在笛卡尔坐标（X，Y）中的点在均匀坐标中变为（x，y，w）。和X和Ÿ在笛卡尔与重新表示X，Y和W ^齐次的; X = x / w Y = y / w
+例如，均匀的笛卡尔（1,2）中的点变为（1，2，1）。如果一点，（1，2）， 向无穷远移动，在笛卡尔坐标中变为（∞，∞）。由于（1/0，2/0）≈（∞，∞），在均匀坐标中变为（1，2，0）。注意，我们可以在无穷远的情况下表达点，而不使用“∞”。
+为什么叫“齐次”？ 如前所述，为了将齐次坐标（x，y，w）转换为笛卡尔坐标，我们简单地将x和y除以w ;
+将齐次转换为笛卡儿，我们可以找到一个重要的事实。我们来看下面的例子。
+正如你所看到的，点（1,2,3），（2,4,6）和（4,8,12）对应于相同的欧几里德点（1/3,2/3）。任何标量积（1a，2a，3a）与欧几里德空间中的（1/3，2/3）相同。因此，这些点是“均匀的”，因为它们在欧氏空间（或笛卡尔空间）中代表相同的点。换句话说，齐次坐标是尺度不变量。
+证明：两条平行线可以相交 考虑欧几里德空间是线性;
+我们知道由于C≠D，上述方程式没有解决办法。 如果C = D，则两行相同（重叠）。
+我们通过将x和y分别替换为x / w，y / w来重写投影空间的方程。
+现在，我们有一个解（x，y，0），因为（C-D）w = 0，∴w = 0。因此，两个平行线在（x，y，0）处相交，这是无限远的点。
+齐次坐标是计算机图形中非常有用和基本的概念，例如将3D场景投影到2D平面上。 "/>
+
+
+
+
+<meta property="article:published_time" content="2017-07-11 01:25:24 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/homogeneoucoordinates/">齐次坐标</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="问题">问题</h1>
+
+<p>在几何空间中，同一平面上的两条平行线不能相交，或者不会相遇，这是大家都知道的一个常识。
+但是，在投影空间中就有了另一种见解，例如，你站在铁轨的一头，向另一头望去，铁轨是越来越窄的，最后，两条平行的轨道在地平线相遇，这是一个无限远的点。
+笛卡尔空间描述了我们的2D / 3D几何形状，但它们不足以处理投影空间（实际上，欧氏几何是投影几何的一个子集）。2D点的直角坐标可以表示为（x，y）。</p>
+
+<p>如何理解无限远呢？</p>
+
+<p>无限远点为（∞，∞）， 在欧几里德空间中变得毫无意义。平行线应该在投影空间无限远地满足，但在欧几里德空间中无法做到。数学家已经发现了一个解决这个问题的方法。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%871.jpg" alt="" /></p>
+
+<h1 id="解决方案-齐次坐标">解决方案：齐次坐标</h1>
+
+<p>均匀坐标可以在投影空间中对图形和几何进行计算。均匀坐标是用N + 1数字表示N维坐标的方式。</p>
+
+<p>为了使2D均匀坐标，我们只需在现有坐标中添加一个附加变量w即可。因此，在笛卡尔坐标（X，Y）中的点在均匀坐标中变为（x，y，w）。和X和Ÿ在笛卡尔与重新表示X，Y和W ^齐次的;
+X = x / w
+Y = y / w</p>
+
+<p>例如，均匀的笛卡尔（1,2）中的点变为（1，2，1）。如果一点，（1，2）， 向无穷远移动，在笛卡尔坐标中变为（∞，∞）。由于（1/0，2/0）≈（∞，∞），在均匀坐标中变为（1，2，0）。注意，我们可以在无穷远的情况下表达点，而不使用“∞”。</p>
+
+<h1 id="为什么叫-齐次">为什么叫“齐次”？</h1>
+
+<p>如前所述，为了将齐次坐标（x，y，w）转换为笛卡尔坐标，我们简单地将x和y除以w ;</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%872.png" alt="" /></p>
+
+<p>将齐次转换为笛卡儿，我们可以找到一个重要的事实。我们来看下面的例子。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%873.png" alt="" /></p>
+
+<p>正如你所看到的，点（1,2,3），（2,4,6）和（4,8,12）对应于相同的欧几里德点（1/3,2/3）。任何标量积（1a，2a，3a）与欧几里德空间中的（1/3，2/3）相同。因此，这些点是“均匀的”，因为它们在欧氏空间（或笛卡尔空间）中代表相同的点。换句话说，齐次坐标是尺度不变量。</p>
+
+<h1 id="证明-两条平行线可以相交">证明：两条平行线可以相交</h1>
+
+<p>考虑欧几里德空间是线性;</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/homogeneous04.png" alt="" /></p>
+
+<p>我们知道由于C≠D，上述方程式没有解决办法。
+如果C = D，则两行相同（重叠）。</p>
+
+<p>我们通过将x和y分别替换为x / w，y / w来重写投影空间的方程。</p>
+
+<p><img src="http://osej1thz9.bkt.clouddn.com/static/images/homogeneous05.png" alt="" /></p>
+
+<p>现在，我们有一个解（x，y，0），因为（C-D）w = 0，∴w = 0。因此，两个平行线在（x，y，0）处相交，这是无限远的点。</p>
+
+<h1 id="齐次坐标是计算机图形中非常有用和基本的概念-例如将3d场景投影到2d平面上">齐次坐标是计算机图形中非常有用和基本的概念，例如将3D场景投影到2D平面上。</h1>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

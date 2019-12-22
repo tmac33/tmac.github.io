@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="《JS 数据处理 - 对象和数组》 对象 对象内容读取 如果属性键为字符串，且该字符串中只包含英文字母和下划线的话，可以直接用 &amp;lt;obj&amp;gt;.&amp;lt;key&amp;gt; 来读取属性值。
+const essay = { title: &#39;基本数据处理 - 对象和数组&#39;, content: [&#39;对象&#39;, &#39;数组&#39;], from: { title: &#39;基本数据处理&#39;, author: { name: &#39;tmac&#39;, description: &#39;全栈开发&#39;, skill: [ &#39;Web 开发&#39;, &#39;移动端开发&#39;, &#39;小程序开发&#39; ] } }, } essay.title // 基本数据处理 - 对象和数组 essay.from.author.name // 阿梦  而当对象中所需要读取的目标属性键为数字、包含英文字母和下划线以外的字符串甚至是 Symbol 对象的时候，就需要使用 obj[key] 的形式来读取属性值了。
+const obj = { 1: 2, &#39;a b c&#39;: &#39;d e f&#39;, [Symbol.for(&#39;foo&#39;)]: &#39;bar&#39; } obj[1] //=&amp;gt; 2 obj[&#39;a b c&#39;] //=&amp;gt; d e f obj[Symbol." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/objects-and-arrays/" />
+
+
+<title>
+    
+    JS 数据处理 - 对象和数组 :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="JS 数据处理 - 对象和数组">
+<meta itemprop="description" content="The JavaScript Array object is a global object that is used in the construction of arrays; which are high-level, list-like objects.">
+
+
+<meta itemprop="datePublished" content="2018-07-28T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-07-28T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="995">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="JS 数据处理 - 对象和数组"/>
+<meta name="twitter:description" content="The JavaScript Array object is a global object that is used in the construction of arrays; which are high-level, list-like objects."/>
+
+
+
+
+<meta property="article:published_time" content="2018-07-28 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/objects-and-arrays/">JS 数据处理 - 对象和数组</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="js-数据处理-对象和数组">《JS 数据处理 - 对象和数组》</h1>
+
+<h2 id="对象">对象</h2>
+
+<h3 id="对象内容读取">对象内容读取</h3>
+
+<p>如果属性键为字符串，且该字符串中只包含英文字母和下划线的话，可以直接用 <code>&lt;obj&gt;.&lt;key&gt;</code> 来读取属性值。</p>
+
+<pre><code class="language-js">const essay = {
+    title: '基本数据处理 - 对象和数组',
+    content: ['对象', '数组'],
+    from: {
+        title: '基本数据处理',
+        author: {
+            name: 'tmac',
+            description: '全栈开发',
+            skill: [ 'Web 开发', '移动端开发', '小程序开发' ]
+        }
+    },
+}
+
+essay.title             // 基本数据处理 - 对象和数组
+essay.from.author.name  // 阿梦
+</code></pre>
+
+<p>而当对象中所需要读取的目标属性键为数字、包含英文字母和下划线以外的字符串甚至是 <code>Symbol</code> 对象的时候，就需要使用 <code>obj[key]</code> 的形式来读取属性值了。</p>
+
+<pre><code class="language-js">const obj = {
+  1: 2,
+  'a b c': 'd e f',
+  [Symbol.for('foo')]: 'bar'
+}
+
+obj[1]                  //=&gt; 2
+obj['a b c']            //=&gt; d e f
+obj[Symbol.for('foo')]  //=&gt; bar...
+</code></pre>
+
+<h3 id="修改对象内容">修改对象内容</h3>
+
+<p>在 JavaScript 中存在着“引用”和“值”的概念区别，当然这同样不是本书的讨论范围。简单地解释，就是对对象内容进行修改跟进行读取类似，只是在读取语句后面加上 <code>= &lt;new value&gt;</code> 即可。</p>
+
+<pre><code class="language-js">const obj = {
+  foo: 'bar',
+  1: 2,
+  'a b c': 'd e f',
+  [Symbol.for('foo')]: 'bar'
+}
+
+obj.foo = 'rab'
+obj[1] = 3
+
+obj.foo // rab
+obj[1]  // 3
+</code></pre>
+
+<p>当然，当你需要为一个对象添加新的属性时，也是通过同样的方式添加属性。</p>
+
+<pre><code class="language-js">const obj = {}
+
+obj.foo = 'bar'
+obj[1] = 2
+</code></pre>
+
+<p>但要非常注意的是，在一般情况下，无论是对对象进行添加、读取还是修改属性，都遵循着嵌套链完整的原则，具体如下例所示。</p>
+
+<pre><code class="language-js">const obj = {
+  item: {}
+}
+
+obj.item.foo = 'bar'    // 正确
+obj.something.bar = 1   // 错误
+</code></pre>
+
+<h3 id="处理对象的一些常见方法">处理对象的一些常见方法</h3>
+
+<h3 id="1-对象的深拷贝">1. 对象的深拷贝</h3>
+
+<p>调用<code>JSON.parse(JSON.stringify(obj))</code>来实现对象<code>obj</code>的复制，也可以使用 <code>Object.assign(target, …sources)</code> 来拷贝</p>
+
+<pre><code class="language-js">let obj = { a: 'apple' }
+let objCopy1 = JSON.parse(JSON.stringify(obj)
+let objCopy2 = Object.assign({}, obj)
+let objCopy3 = {...obj}
+
+obj.a = 'banana'
+
+obj.a       // 'banana'
+objCopy1.a  // 'apple'
+objCopy2.a  // 'apple'
+objCopy3.a  // 'apple'
+</code></pre>
+
+<h3 id="2-对象的合并">2. 对象的合并</h3>
+
+<p>ES5 中增加了原生的 <code>Object.assign(target, …sources)</code> 来实现合并。而利用 ES6 中的扩展运算符，调用形如<code>{…x, …y}</code> 的声明，也能实现对象的合并。</p>
+
+<pre><code class="language-js">let obj1 = { a: 'apple' }
+let obj2 = { b: 'banana' }
+let obj3 = { c: 'orange' }
+
+Object.assign(obj1, obj2 , obj3)
+Object.assign({}, obj1, obj2 , obj3)
+{...obj1, ...obj2, ...obj3}
+
+// {a: &quot;apple&quot;, b: &quot;banana&quot;, c: &quot;orange&quot;}
+</code></pre>
+
+<h3 id="3-object-keys-obj-的用法">3. Object.keys(obj) 的用法</h3>
+
+<pre><code class="language-js">const arr = ['a', 'b', 'c']
+Object.keys(arr) // ['0', '1', '2']
+
+
+const obj = { 0: 'a', 1: 'b', 2: 'c' };
+Object.keys(obj) // ['0', '1', '2']
+
+
+const obj2 = { name: 'tony', sex: 'male', age: 25 };
+Object.keys(obj2) // [&quot;name&quot;, &quot;sex&quot;, &quot;age&quot;]
+
+
+const anObj = { 100: 'a', 2: 'b', 7: 'c' };
+Object.keys(anObj) // ['2', '7', '100']
+
+
+const myObj = Object.create({}, {
+    getFoo: {
+        value: () =&gt; this.foo
+    } 
+})
+myObj.foo = 1
+console.log(Object.keys(myObj)) // ['foo']
+</code></pre>
+
+<p>也可用于 <code>Vue</code> 中将组件批量挂载到全局</p>
+
+<pre><code class="language-js">const components = {
+    AppHeader,
+    AppBody,
+    AppFooter
+}
+
+const install = (Vue) =&gt; {
+    Object.keys(components).forEach((key) =&gt; {
+        Vue.component(key, components[key])
+    })
+}
+
+Vue.use({...components, install})
+</code></pre>
+
+<h3 id="4-object-entries-的用法">4. Object.entries() 的用法</h3>
+
+<p><code>Object.entries()</code> 方法返回一个给定对象自身可枚举属性的键值对数组</p>
+
+<pre><code class="language-js">const object1 = { foo: 'bar', baz: 42 }
+Object.entries(object1)[1] // [&quot;baz&quot;, 42]
+
+
+const object2 = { 0: 'a', 1: 'b', 2: 'c' }
+Object.entries(object2)[2] // [&quot;2&quot;, &quot;c&quot;]
+
+
+const object3 = { 100: 'a', 2: 'b', 7: 'c' }
+Object.entries(object3)[0] // [&quot;2&quot;, &quot;b&quot;]
+Object.entries(object3)[1] // [&quot;7&quot;, &quot;c&quot;]
+</code></pre>
+
+<h2 id="数组">数组</h2>
+
+<h3 id="数组类型监测">数组类型监测</h3>
+
+<ul>
+<li><code>instanceof</code> 只有一个全局作用域下，使用这种方法。若网页中包含多个框架，容易出错。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+arr instanceof Array  // true
+arr instanceof Object // true
+</code></pre>
+
+<ul>
+<li><code>Array.isArray()</code> 不管有几个全局环境，都可以，但是兼容性不高。</li>
+</ul>
+
+<pre><code class="language-js">Array.isArray([1, 2, 3])  // true
+Array.isArray({foo: 123}) // false
+Array.isArray(&quot;foobar&quot;)   // false
+Array.isArray(undefined)  // false
+</code></pre>
+
+<ul>
+<li><code>Object.prototype.toString.call()</code> 使用对象的 <code>toString</code> 函数判断，兼容性好。不能使用数组自身的 <code>toString</code>，因为该函数已经被重写了。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+Object.prototype.toString.call(arr)  // &quot;[object Array]&quot;
+</code></pre>
+
+<h3 id="处理数组的一些常用方法">处理数组的一些常用方法</h3>
+
+<h3 id="1-数组转为字符串">1. 数组转为字符串</h3>
+
+<pre><code class="language-js">const arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+
+arr.toLocaleString() // &quot;a,b,c&quot;
+arr.toString()       // &quot;a,b,c&quot;
+arr.join(',')        // &quot;a,b,c&quot;
+arr.valueOf()        // 返回本身 [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+...arr               // a b c
+</code></pre>
+
+<h3 id="2-其他数据结构转为数组">2. 其他数据结构转为数组</h3>
+
+<ul>
+<li><code>Array.from(obj, mapFn, thisArg)</code> 方法有一个可选参数 <code>mapFn</code>，让你可以在最后生成的数组上再执行一次 <code>map</code> 方法后再返回。也就是说 <code>Array.from(obj, mapFn, thisArg)</code> 就相当于 <code>Array.from(obj).map(mapFn, thisArg)</code></li>
+</ul>
+
+<pre><code class="language-js">Array.from('foo') // [&quot;f&quot;, &quot;o&quot;, &quot;o&quot;]
+Array.from([1, 2, 3], x =&gt; x + x) // [2, 4, 6]
+</code></pre>
+
+<ul>
+<li><code>Array.of()</code> 将一组值转换为数组</li>
+</ul>
+
+<pre><code class="language-js">Array.of(3, 11, 8)  // [3,11,8]
+Array.of(3)         // [3]
+Array.of(3).length  // 1
+</code></pre>
+
+<h3 id="3-数组的添加和删除-会改变原数组">3. 数组的添加和删除 <code>(会改变原数组)</code></h3>
+
+<ul>
+<li>栈方法 <code>arr.push(el1, ..., elN)</code> 将一个或N个元素添加到数组的末尾，并返回新数组的长度
+```js
+let arr = [&ldquo;a&rdquo;,&ldquo;b&rdquo;,&ldquo;c&rdquo;]</li>
+</ul>
+
+<p>arr.push(&ldquo;d&rdquo;)     // 返回 4，数组改变为 [&ldquo;a&rdquo;,&ldquo;b&rdquo;,&ldquo;c&rdquo;,&ldquo;d&rdquo;]
+arr.push(&ldquo;d&rdquo;,&ldquo;e&rdquo;) // 返回 5, [&ldquo;a&rdquo;,&ldquo;b&rdquo;,&ldquo;c&rdquo;,&ldquo;d&rdquo;,&ldquo;e&rdquo;]</p>
+
+<pre><code>
+- 栈方法 `arr.pop()` 从数组中删除最后一个元素，并返回该元素的值
+```js
+let arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+
+arr.pop() // 返回 &quot;c&quot;，数组改变为 [&quot;a&quot;,&quot;b&quot;]
+</code></pre>
+
+<ul>
+<li>队列方法 <code>arr.shift()</code> 从数组中删除第一个元素，并返回该元素的值
+```js
+let arr = [&ldquo;a&rdquo;,&ldquo;b&rdquo;,&ldquo;c&rdquo;]</li>
+</ul>
+
+<p>arr.shift() // 返回 &ldquo;a&rdquo;，数组改变为 [&ldquo;b&rdquo;,&ldquo;c&rdquo;]</p>
+
+<pre><code>
+- 队列方法 `arr.unshift(el1, ..., elN)` 将一个或 N 个元素添加到数组的开头，并返回新数组的长度
+```js
+let arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+
+arr.unshift(&quot;-1&quot;)      // 返回 4，数组改变为 [&quot;-1&quot;,&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+arr.unshift(&quot;-2&quot;,&quot;-1&quot;) // 返回 5，[&quot;-2&quot;,&quot;-1&quot;,&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]
+</code></pre>
+
+<h3 id="4-数组的排序-会改变原数组">4. 数组的排序  <code>(会改变原数组)</code></h3>
+
+<ul>
+<li><code>arr.reverse()</code> 方法将数组中元素的位置颠倒
+```js
+let arr = [&ldquo;a&rdquo;,&ldquo;b&rdquo;,&ldquo;c&rdquo;]</li>
+</ul>
+
+<p>arr.reverse()      // 数组改变为 [&ldquo;c&rdquo;,&ldquo;b&rdquo;,&ldquo;a&rdquo;]</p>
+
+<pre><code>- `arr.sort()` 方法用原地算法对数组的元素进行排序，并返回数组。排序不一定是稳定的。默认排序顺序是根据字符串`Unicode`码点。
+
+```js
+const months = ['March', 'Jan', 'Feb', 'Dec']
+months.sort() // [&quot;Dec&quot;, &quot;Feb&quot;, &quot;Jan&quot;, &quot;March&quot;]
+
+const numbers = [1, 30, 4, 21]
+months.sort() // [1, 21, 30, 4]
+</code></pre>
+
+<h3 id="5-数组的合并">5. 数组的合并</h3>
+
+<ul>
+<li>扩展运算符 <code>...</code></li>
+</ul>
+
+<pre><code class="language-js">const arr1 = ['a', 'b', 'c']
+const arr2 = ['d', 'e', 'f']
+
+[...arr1, ...arr2] // ['a', 'b', 'c', 'd', 'e', 'f']
+</code></pre>
+
+<ul>
+<li><code>arr1.concat(arr2)</code> 合并两个或多个数组。此方法不会更改现有数组，而是返回一个新数组</li>
+</ul>
+
+<pre><code class="language-js">const arr1 = ['a', 'b', 'c']
+const arr2 = ['d', 'e', 'f']
+
+arr1.concat(arr2) // ['a', 'b', 'c', 'd', 'e', 'f']
+</code></pre>
+
+<h3 id="6-数组的切割-截取-slice">6. 数组的切割、截取 <code>slice()</code></h3>
+
+<p><code>arr.slice(begin, end)</code> 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对象。此方法不会更改现有数组，而是返回一个新数组。</p>
+
+<pre><code class="language-js">let arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;]
+
+arr.slice(2)     // [&quot;c&quot;,&quot;d&quot;,&quot;e&quot;]
+arr.slice(0, 2)  // [&quot;a&quot;,&quot;b&quot;]
+arr.slice(3, 4)  // [&quot;d&quot;]
+</code></pre>
+
+<h3 id="7-数组的拼接-会改变原数组">7. 数组的拼接 <code>(会改变原数组)</code></h3>
+
+<p><code>arr.splice(start, deleteCount, items)</code> 方法：
+- 第一个参数<code>start</code>表示起始位置
+- 第二个参数<code>deleteCount</code>表示要删除的个数（若为0，表示不删除）
+- 第三个参数<code>items</code>表示要添加的项（可选,可以传多个）
+- 会改变原数组
+- 该方法经常用来做前后互换的排序</p>
+
+<pre><code class="language-js">let arr = [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;]
+
+arr.splice(1,0,&quot;666&quot;) // [&quot;a&quot;,&quot;666&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;]
+arr.splice(4,1,&quot;888&quot;) // [&quot;a&quot;,&quot;666&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;888&quot;]
+</code></pre>
+
+<h3 id="8-数组的填充-fill">8. 数组的填充 <code>fill()</code></h3>
+
+<p><code>arr.fill(content, start, end)</code> 方法，使用给定值，填充一个数组：
+- 第一个参数 <code>content</code> 表示填充的值
+- 第二个参数 <code>start</code> 表示填充起始位置
+- 第三个参数 <code>end</code> 表示填充的结束位置的前一个
+- 常用于接口数据模拟</p>
+
+<pre><code class="language-js">['a', 'b', 'c'].fill(7)       // [7, 7, 7]
+new Array(3).fill(7)          // [7, 7, 7]
+['a', 'b', 'c'].fill(7, 1, 2) // ['a', 7, 'c']
+</code></pre>
+
+<h3 id="9-查找项的位置-indexof-lastindexof">9. 查找项的位置 <code>indexOf</code> <code>lastIndexOf</code></h3>
+
+<ul>
+<li><code>arr.indexOf(sth)</code> 从前往后查找，返回查找项的位置，没有的话返回-1</li>
+<li><code>arr.lastIndexOf(sth)</code> 从后往前查找，返回查找项的位置，没有的话返回-1</li>
+</ul>
+
+<h3 id="10-数组的累加-聚合-reduce">10. 数组的累加 &amp; 聚合 <code>reduce()</code></h3>
+
+<p><code>arr.reduce(callback)</code> 方法对累加器和数组中的每个元素（从左到右）应用一个函数，将其简化为单个</p>
+
+<pre><code class="language-js">const arr =  [ 1, 2, 3, 4, 5 ]
+
+// 求和 =&gt; 15
+arr.reduce((a, b) =&gt; a + b)
+
+// 求积 =&gt; 120
+arr.reduce((a, b) =&gt; a * b)
+</code></pre>
+
+<h3 id="11-数组的查找和过滤">11. 数组的查找和过滤</h3>
+
+<ul>
+<li><code>arr.find(callback)</code>
+方法返回数组中满足提供的测试函数的第一个元素的值。否则返回 undefined。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [5, 12, 8, 130, 44]
+arr.find((item) =&gt; item &gt; 10) // 12
+</code></pre>
+
+<ul>
+<li><code>arr.findIndex(callback)</code>
+方法返回数组中满足提供的测试函数的第一个元素的索引index。否则返回 -1。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [5, 12, 8, 130, 44]
+arr.findIndex((item) =&gt; item &gt; 10) // 1
+</code></pre>
+
+<ul>
+<li><code>arr.some(callback)</code>
+方法测试数组中的某些元素是否通过由提供的函数实现的测试。返回Boolean值。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [5, 12, 8, 130, 44]
+arr.some((item) =&gt; item &gt; 10) // true
+</code></pre>
+
+<ul>
+<li><code>arr.every(callback)</code>
+方法测试数组的所有元素是否都通过了指定函数的测试。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [5, 12, 8, 130, 44]
+arr.every((item) =&gt; item &gt; 10) // false
+</code></pre>
+
+<ul>
+<li><code>arr.includes(value)</code>
+方法用来判断一个数组是否包含一个指定的值，根据情况，如果包含则返回 true，否则返回false。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [5, 12, 8, 130, 44]
+arr.includes(5) // true
+</code></pre>
+
+<ul>
+<li><code>arr.filter(callback)</code>
+方法创建一个新数组, 其包含通过所提供函数实现的测试的所有元素。不更改原数组。</li>
+</ul>
+
+<pre><code class="language-js">const arr = [5, 12, 8, 130, 44]
+arr.filter((item) =&gt; item &lt; 100) // [5, 12, 8, 44]
+</code></pre>
+
+<h3 id="12-数组的循环-foreach">12. 数组的循环 <code>forEach()</code></h3>
+
+<p><code>arr.forEach()</code> 方法对数组的每个元素执行一次提供的函数</p>
+
+<pre><code class="language-js">let arr = ['a', 'b', 'c']
+
+arr.forEach((item) =&gt; {
+  console.log(item);
+})
+
+// expected output: &quot;a&quot;
+// expected output: &quot;b&quot;
+// expected output: &quot;c&quot;
+</code></pre>
+
+<h3 id="13-数组的遍历-map">13. 数组的遍历 <code>map()</code></h3>
+
+<p><code>arr.map()</code> 方法创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果</p>
+
+<pre><code class="language-js">let arr = [
+    {
+        age: 14,
+        name: &quot;小红&quot;
+    },
+    {
+        age: 18,
+        name: &quot;小明&quot;
+    },
+    {
+        age: 22,
+        name: &quot;老王&quot;
+    }
+]
+
+arr.map(item =&gt; item.age*2) // [28, 36, 44]
+
+arr.map(item =&gt; item.name) // [&quot;小红&quot;, &quot;小明&quot;, &quot;老王&quot;]
+</code></pre>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

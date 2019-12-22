@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="控制并发有两种经典的方式，一种是WaitGroup，另一种就是Context。
+什么是WaitGroup 它是一种控制并发的方式，它的这种控制并发的方式是控制多个goroutine同时完成。
+func main() { var wg sync.WaitGroup wg.Add(2) go func() { time.Sleep(2*time.Second) fmt.Println(&amp;quot;1号完成&amp;quot;) wg.Done() }() go func() { time.Sleep(2*time.Second) fmt.Println(&amp;quot;2号完成&amp;quot;) wg.Done() }() wg.Wait() fmt.Println(&amp;quot;好了，大家都干完了，放工&amp;quot;) }  一个很简单的例子，一定要例子中的2个goroutine同时做完，才算是完成，先做好的就要等着其他未完成的，所有的goroutine要都全部完成才可以。
+这是一种控制并发的方式，这种尤其适用于，好多个goroutine协同做一件事情的时候，因为每个goroutine做的都是这件事情的一部分，只有全部的goroutine都完成，这件事情才算是完成，这是等待的方式。
+在实际的业务种，我们可能会有这么一种场景：需要我们主动的通知某一个goroutine结束。比如我们开启一个后台goroutine一直做事情，比如监控，现在不需要了，就需要通知这个监控goroutine结束，不然它会一直跑，就泄漏了。
+chan通知 我们都知道一个goroutine启动后，我们是无法控制他的，大部分情况是等待它自己结束，那么如果这个goroutine是一个不会自己结束的后台goroutine呢？比如监控等，会一直运行的。
+这种情况化，一直傻瓜式的办法是全局变量，其他地方通过修改这个变量完成结束通知，然后后台goroutine不停的检查这个变量，如果发现被通知关闭了，就自我结束。
+这种方式也可以，但是首先我们要保证这个变量在多线程下的安全，基于此，有一种更好的方式：chan &#43; select 。
+func main() { stop := make(chan bool) go func() { for { select { case &amp;lt;-stop: fmt.Println(&amp;quot;监控退出，停止了...&amp;quot;) return default: fmt.Println(&amp;quot;goroutine监控中...&amp;quot;) time.Sleep(2 * time.Second) } } }() time.Sleep(10 * time.Second) fmt.Println(&amp;quot;可以了，通知监控停止&amp;quot;) stop&amp;lt;- true //为了检测监控过是否停止，如果没有监控输出，就表示停止了 time." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/golangcontext/" />
+
+
+<title>
+    
+    深入理解Context :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="深入理解Context">
+<meta itemprop="description" content="控制并发有两种经典的方式，一种是WaitGroup，另一种就是Context。
+什么是WaitGroup 它是一种控制并发的方式，它的这种控制并发的方式是控制多个goroutine同时完成。
+func main() { var wg sync.WaitGroup wg.Add(2) go func() { time.Sleep(2*time.Second) fmt.Println(&quot;1号完成&quot;) wg.Done() }() go func() { time.Sleep(2*time.Second) fmt.Println(&quot;2号完成&quot;) wg.Done() }() wg.Wait() fmt.Println(&quot;好了，大家都干完了，放工&quot;) }  一个很简单的例子，一定要例子中的2个goroutine同时做完，才算是完成，先做好的就要等着其他未完成的，所有的goroutine要都全部完成才可以。
+这是一种控制并发的方式，这种尤其适用于，好多个goroutine协同做一件事情的时候，因为每个goroutine做的都是这件事情的一部分，只有全部的goroutine都完成，这件事情才算是完成，这是等待的方式。
+在实际的业务种，我们可能会有这么一种场景：需要我们主动的通知某一个goroutine结束。比如我们开启一个后台goroutine一直做事情，比如监控，现在不需要了，就需要通知这个监控goroutine结束，不然它会一直跑，就泄漏了。
+chan通知 我们都知道一个goroutine启动后，我们是无法控制他的，大部分情况是等待它自己结束，那么如果这个goroutine是一个不会自己结束的后台goroutine呢？比如监控等，会一直运行的。
+这种情况化，一直傻瓜式的办法是全局变量，其他地方通过修改这个变量完成结束通知，然后后台goroutine不停的检查这个变量，如果发现被通知关闭了，就自我结束。
+这种方式也可以，但是首先我们要保证这个变量在多线程下的安全，基于此，有一种更好的方式：chan &#43; select 。
+func main() { stop := make(chan bool) go func() { for { select { case &lt;-stop: fmt.Println(&quot;监控退出，停止了...&quot;) return default: fmt.Println(&quot;goroutine监控中...&quot;) time.Sleep(2 * time.Second) } } }() time.Sleep(10 * time.Second) fmt.Println(&quot;可以了，通知监控停止&quot;) stop&lt;- true //为了检测监控过是否停止，如果没有监控输出，就表示停止了 time.">
+
+
+<meta itemprop="datePublished" content="2018-11-18T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-11-18T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1011">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="深入理解Context"/>
+<meta name="twitter:description" content="控制并发有两种经典的方式，一种是WaitGroup，另一种就是Context。
+什么是WaitGroup 它是一种控制并发的方式，它的这种控制并发的方式是控制多个goroutine同时完成。
+func main() { var wg sync.WaitGroup wg.Add(2) go func() { time.Sleep(2*time.Second) fmt.Println(&quot;1号完成&quot;) wg.Done() }() go func() { time.Sleep(2*time.Second) fmt.Println(&quot;2号完成&quot;) wg.Done() }() wg.Wait() fmt.Println(&quot;好了，大家都干完了，放工&quot;) }  一个很简单的例子，一定要例子中的2个goroutine同时做完，才算是完成，先做好的就要等着其他未完成的，所有的goroutine要都全部完成才可以。
+这是一种控制并发的方式，这种尤其适用于，好多个goroutine协同做一件事情的时候，因为每个goroutine做的都是这件事情的一部分，只有全部的goroutine都完成，这件事情才算是完成，这是等待的方式。
+在实际的业务种，我们可能会有这么一种场景：需要我们主动的通知某一个goroutine结束。比如我们开启一个后台goroutine一直做事情，比如监控，现在不需要了，就需要通知这个监控goroutine结束，不然它会一直跑，就泄漏了。
+chan通知 我们都知道一个goroutine启动后，我们是无法控制他的，大部分情况是等待它自己结束，那么如果这个goroutine是一个不会自己结束的后台goroutine呢？比如监控等，会一直运行的。
+这种情况化，一直傻瓜式的办法是全局变量，其他地方通过修改这个变量完成结束通知，然后后台goroutine不停的检查这个变量，如果发现被通知关闭了，就自我结束。
+这种方式也可以，但是首先我们要保证这个变量在多线程下的安全，基于此，有一种更好的方式：chan &#43; select 。
+func main() { stop := make(chan bool) go func() { for { select { case &lt;-stop: fmt.Println(&quot;监控退出，停止了...&quot;) return default: fmt.Println(&quot;goroutine监控中...&quot;) time.Sleep(2 * time.Second) } } }() time.Sleep(10 * time.Second) fmt.Println(&quot;可以了，通知监控停止&quot;) stop&lt;- true //为了检测监控过是否停止，如果没有监控输出，就表示停止了 time."/>
+
+
+
+
+<meta property="article:published_time" content="2018-11-18 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/golangcontext/">深入理解Context</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<p>控制并发有两种经典的方式，一种是WaitGroup，另一种就是Context。</p>
+
+<h1 id="什么是waitgroup">什么是WaitGroup</h1>
+
+<p>它是一种控制并发的方式，它的这种控制并发的方式是控制多个goroutine同时完成。</p>
+
+<pre><code class="language-go">func main() {
+    var wg sync.WaitGroup
+
+    wg.Add(2)
+    go func() {
+        time.Sleep(2*time.Second)
+        fmt.Println(&quot;1号完成&quot;)
+        wg.Done()
+    }()
+    go func() {
+        time.Sleep(2*time.Second)
+        fmt.Println(&quot;2号完成&quot;)
+        wg.Done()
+    }()
+    wg.Wait()
+    fmt.Println(&quot;好了，大家都干完了，放工&quot;)
+}
+
+</code></pre>
+
+<p>一个很简单的例子，一定要例子中的2个goroutine同时做完，才算是完成，先做好的就要等着其他未完成的，所有的goroutine要都全部完成才可以。</p>
+
+<p>这是一种控制并发的方式，这种尤其适用于，好多个goroutine协同做一件事情的时候，因为每个goroutine做的都是这件事情的一部分，只有全部的goroutine都完成，这件事情才算是完成，这是等待的方式。</p>
+
+<p>在实际的业务种，我们可能会有这么一种场景：需要我们主动的通知某一个goroutine结束。比如我们开启一个后台goroutine一直做事情，比如监控，现在不需要了，就需要通知这个监控goroutine结束，不然它会一直跑，就泄漏了。</p>
+
+<h1 id="chan通知">chan通知</h1>
+
+<p>我们都知道一个goroutine启动后，我们是无法控制他的，大部分情况是等待它自己结束，那么如果这个goroutine是一个不会自己结束的后台goroutine呢？比如监控等，会一直运行的。</p>
+
+<p>这种情况化，一直傻瓜式的办法是全局变量，其他地方通过修改这个变量完成结束通知，然后后台goroutine不停的检查这个变量，如果发现被通知关闭了，就自我结束。</p>
+
+<p>这种方式也可以，但是首先我们要保证这个变量在多线程下的安全，基于此，有一种更好的方式：chan + select 。</p>
+
+<pre><code class="language-go">func main() {
+    stop := make(chan bool)
+
+    go func() {
+        for {
+            select {
+            case &lt;-stop:
+                fmt.Println(&quot;监控退出，停止了...&quot;)
+                return
+            default:
+                fmt.Println(&quot;goroutine监控中...&quot;)
+                time.Sleep(2 * time.Second)
+            }
+        }
+    }()
+
+    time.Sleep(10 * time.Second)
+    fmt.Println(&quot;可以了，通知监控停止&quot;)
+    stop&lt;- true
+    //为了检测监控过是否停止，如果没有监控输出，就表示停止了
+    time.Sleep(5 * time.Second)
+
+}
+</code></pre>
+
+<p>例子中我们定义一个stop的chan，通知他结束后台goroutine。实现也非常简单，在后台goroutine中，使用select判断stop是否可以接收到值，如果可以接收到，就表示可以退出停止了；如果没有接收到，就会执行default里的监控逻辑，继续监控，只到收到stop的通知。</p>
+
+<p>有了以上的逻辑，我们就可以在其他goroutine种，给stop chan发送值了，例子中是在main goroutine中发送的，控制让这个监控的goroutine结束。</p>
+
+<p>发送了stop&lt;- true结束的指令后，我这里使用time.Sleep(5 * time.Second)故意停顿5秒来检测我们结束监控goroutine是否成功。如果成功的话，不会再有goroutine监控中&hellip;的输出了；如果没有成功，监控goroutine就会继续打印goroutine监控中&hellip;输出。</p>
+
+<p>这种chan+select的方式，是比较优雅的结束一个goroutine的方式，不过这种方式也有局限性，如果有很多goroutine都需要控制结束怎么办呢？如果这些goroutine又衍生了其他更多的goroutine怎么办呢？如果一层层的无穷尽的goroutine呢？这就非常复杂了，即使我们定义很多chan也很难解决这个问题，因为goroutine的关系链就导致了这种场景非常复杂。</p>
+
+<h1 id="初识context">初识Context</h1>
+
+<p>上面说的这种场景是存在的，比如一个网络请求Request，每个Request都需要开启一个goroutine做一些事情，这些goroutine又可能会开启其他的goroutine。所以我们需要一种可以跟踪goroutine的方案，才可以达到控制他们的目的，这就是Go语言为我们提供的Context，称之为上下文非常贴切，它就是goroutine的上下文。</p>
+
+<p>下面我们就使用Go Context重写上面的示例。</p>
+
+<pre><code class="language-go">func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+    go func(ctx context.Context) {
+        for {
+            select {
+            case &lt;-ctx.Done():
+                fmt.Println(&quot;监控退出，停止了...&quot;)
+                return
+            default:
+                fmt.Println(&quot;goroutine监控中...&quot;)
+                time.Sleep(2 * time.Second)
+            }
+        }
+    }(ctx)
+
+    time.Sleep(10 * time.Second)
+    fmt.Println(&quot;可以了，通知监控停止&quot;)
+    cancel()
+    //为了检测监控过是否停止，如果没有监控输出，就表示停止了
+    time.Sleep(5 * time.Second)
+}
+</code></pre>
+
+<p>重写比较简单，就是把原来的chan stop 换成Context，使用Context跟踪goroutine，以便进行控制，比如结束等。</p>
+
+<p>context.Background() 返回一个空的Context，这个空的Context一般用于整个Context树的根节点。然后我们使用context.WithCancel(parent)函数，创建一个可取消的子Context，然后当作参数传给goroutine使用，这样就可以使用这个子Context跟踪这个goroutine。</p>
+
+<p>在goroutine中，使用select调用&lt;-ctx.Done()判断是否要结束，如果接受到值的话，就可以返回结束goroutine了；如果接收不到，就会继续进行监控。</p>
+
+<p>那么是如何发送结束指令的呢？这就是示例中的cancel函数啦，它是我们调用context.WithCancel(parent)函数生成子Context的时候返回的，第二个返回值就是这个取消函数，它是CancelFunc类型的。我们调用它就可以发出取消指令，然后我们的监控goroutine就会收到信号，就会返回结束。</p>
+
+<h1 id="context控制多个goroutine">Context控制多个goroutine</h1>
+
+<p>使用Context控制一个goroutine的例子如上，非常简单，下面我们看看控制多个goroutine的例子，其实也比较简单。</p>
+
+<pre><code class="language-go">func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+    go watch(ctx,&quot;【监控1】&quot;)
+    go watch(ctx,&quot;【监控2】&quot;)
+    go watch(ctx,&quot;【监控3】&quot;)
+
+    time.Sleep(10 * time.Second)
+    fmt.Println(&quot;可以了，通知监控停止&quot;)
+    cancel()
+    //为了检测监控过是否停止，如果没有监控输出，就表示停止了
+    time.Sleep(5 * time.Second)
+}
+
+func watch(ctx context.Context, name string) {
+    for {
+        select {
+        case &lt;-ctx.Done():
+            fmt.Println(name,&quot;监控退出，停止了...&quot;)
+            return
+        default:
+            fmt.Println(name,&quot;goroutine监控中...&quot;)
+            time.Sleep(2 * time.Second)
+        }
+    }
+}
+</code></pre>
+
+<p>示例中启动了3个监控goroutine进行不断的监控，每一个都使用了Context进行跟踪，当我们使用cancel函数通知取消时，这3个goroutine都会被结束。这就是Context的控制能力，它就像一个控制器一样，按下开关后，所有基于这个Context或者衍生的子Context都会收到通知，这时就可以进行清理操作了，最终释放goroutine，这就优雅的解决了goroutine启动后不可控的问题。</p>
+
+<h1 id="context接口">Context接口</h1>
+
+<p>Context的接口定义的比较简洁，我们看下这个接口的方法。</p>
+
+<pre><code class="language-go">type Context interface {
+    Deadline() (deadline time.Time, ok bool)
+
+    Done() &lt;-chan struct{}
+
+    Err() error
+
+    Value(key interface{}) interface{}
+}
+</code></pre>
+
+<p>这个接口共有4个方法，了解这些方法的意思非常重要，这样我们才可以更好的使用他们。</p>
+
+<p>Deadline方法是获取设置的截止时间的意思，第一个返回式是截止时间，到了这个时间点，Context会自动发起取消请求；第二个返回值ok==false时表示没有设置截止时间，如果需要取消的话，需要调用取消函数进行取消。</p>
+
+<p>Done方法返回一个只读的chan，类型为struct{}，我们在goroutine中，如果该方法返回的chan可以读取，则意味着parent context已经发起了取消请求，我们通过Done方法收到这个信号后，就应该做清理操作，然后退出goroutine，释放资源。</p>
+
+<p>Err方法返回取消的错误原因，因为什么Context被取消。</p>
+
+<p>Value方法获取该Context上绑定的值，是一个键值对，所以要通过一个Key才可以获取对应的值，这个值一般是线程安全的。</p>
+
+<p>以上四个方法中常用的就是Done了，如果Context取消的时候，我们就可以得到一个关闭的chan，关闭的chan是可以读取的，所以只要可以读取的时候，就意味着收到Context取消的信号了，以下是这个方法的经典用法。</p>
+
+<pre><code class="language-go"> func Stream(ctx context.Context, out chan&lt;- Value) error {
+    for {
+        v, err := DoSomething(ctx)
+        if err != nil {
+            return err
+        }
+        select {
+        case &lt;-ctx.Done():
+            return ctx.Err()
+        case out &lt;- v:
+        }
+    }
+  }
+</code></pre>
+
+<p>Context接口并不需要我们实现，Go内置已经帮我们实现了2个，我们代码中最开始都是以这两个内置的作为最顶层的partent context，衍生出更多的子Context。</p>
+
+<pre><code class="language-go">var (
+    background = new(emptyCtx)
+    todo       = new(emptyCtx)
+)
+
+func Background() Context {
+    return background
+}
+
+func TODO() Context {
+    return todo
+}
+</code></pre>
+
+<p>一个是Background，主要用于main函数、初始化以及测试代码中，作为Context这个树结构的最顶层的Context，也就是根Context。</p>
+
+<p>一个是TODO,它目前还不知道具体的使用场景，如果我们不知道该使用什么Context的时候，可以使用这个。</p>
+
+<p>他们两个本质上都是emptyCtx结构体类型，是一个不可取消，没有设置截止时间，没有携带任何值的Context。</p>
+
+<pre><code class="language-go">type emptyCtx int
+
+func (*emptyCtx) Deadline() (deadline time.Time, ok bool) {
+    return
+}
+
+func (*emptyCtx) Done() &lt;-chan struct{} {
+    return nil
+}
+
+func (*emptyCtx) Err() error {
+    return nil
+}
+
+func (*emptyCtx) Value(key interface{}) interface{} {
+    return nil
+}
+</code></pre>
+
+<p>这就是emptyCtx实现Context接口的方法，可以看到，这些方法什么都没做，返回的都是nil或者零值。</p>
+
+<h1 id="context的继承衍生">Context的继承衍生</h1>
+
+<p>有了如上的根Context，那么是如何衍生更多的子Context的呢？这就要靠context包为我们提供的With系列的函数了。</p>
+
+<pre><code class="language-go">func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
+func WithDeadline(parent Context, deadline time.Time) (Context, CancelFunc)
+func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+func WithValue(parent Context, key, val interface{}) Context
+</code></pre>
+
+<p>这四个With函数，接收的都有一个partent参数，就是父Context，我们要基于这个父Context创建出子Context的意思，这种方式可以理解为子Context对父Context的继承，也可以理解为基于父Context的衍生。</p>
+
+<p>通过这些函数，就创建了一颗Context树，树的每个节点都可以有任意多个子节点，节点层级可以有任意多个。</p>
+
+<p>WithCancel函数，传递一个父Context作为参数，返回子Context，以及一个取消函数用来取消Context。 WithDeadline函数，和WithCancel差不多，它会多传递一个截止时间参数，意味着到了这个时间点，会自动取消Context，当然我们也可以不等到这个时候，可以提前通过取消函数进行取消。</p>
+
+<p>WithTimeout和WithDeadline基本上一样，这个表示是超时自动取消，是多少时间后自动取消Context的意思。</p>
+
+<p>WithValue函数和取消Context无关，它是为了生成一个绑定了一个键值对数据的Context，这个绑定的数据可以通过Context.Value方法访问到，后面我们会专门讲。</p>
+
+<p>大家可能留意到，前三个函数都返回一个取消函数CancelFunc，这是一个函数类型，它的定义非常简单。</p>
+
+<pre><code class="language-go">type CancelFunc func()
+</code></pre>
+
+<p>这就是取消函数的类型，该函数可以取消一个Context，以及这个节点Context下所有的所有的Context，不管有多少层级。</p>
+
+<h1 id="withvalue传递元数据">WithValue传递元数据</h1>
+
+<p>通过Context我们也可以传递一些必须的元数据，这些数据会附加在Context上以供使用。</p>
+
+<pre><code class="language-go">var key string=&quot;name&quot;
+
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+    //附加值
+    valueCtx:=context.WithValue(ctx,key,&quot;【监控1】&quot;)
+    go watch(valueCtx)
+    time.Sleep(10 * time.Second)
+    fmt.Println(&quot;可以了，通知监控停止&quot;)
+    cancel()
+    //为了检测监控过是否停止，如果没有监控输出，就表示停止了
+    time.Sleep(5 * time.Second)
+}
+
+func watch(ctx context.Context) {
+    for {
+        select {
+        case &lt;-ctx.Done():
+            //取出值
+            fmt.Println(ctx.Value(key),&quot;监控退出，停止了...&quot;)
+            return
+        default:
+            //取出值
+            fmt.Println(ctx.Value(key),&quot;goroutine监控中...&quot;)
+            time.Sleep(2 * time.Second)
+        }
+    }
+}
+</code></pre>
+
+<p>在前面的例子，我们通过传递参数的方式，把name的值传递给监控函数。在这个例子里，我们实现一样的效果，但是通过的是Context的Value的方式。</p>
+
+<p>我们可以使用context.WithValue方法附加一对K-V的键值对，这里Key必须是等价性的，也就是具有可比性；Value值要是线程安全的。</p>
+
+<p>这样我们就生成了一个新的Context，这个新的Context带有这个键值对，在使用的时候，可以通过Value方法读取ctx.Value(key)。</p>
+
+<p>记住，使用WithValue传值，一般是必须的值，不要什么值都传递。</p>
+
+<h1 id="context使用的原则">Context使用的原则</h1>
+
+<ol>
+<li>不要把Context放在结构体中，要以参数的方式传递</li>
+<li>以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位。</li>
+<li>给一个函数方法传递Context的时候，不要传递nil，如果不知道传递什么，就使用context.TODO</li>
+<li>Context的Value相关方法应该传递必须的数据，不要什么数据都使用这个传递</li>
+<li>Context是线程安全的，可以放心的在多个goroutine中传递</li>
+</ol>
+
+<h1 id="context的使用场景">Context的使用场景</h1>
+
+<h2 id="场景一-rpc调用">场景一：RPC调用</h2>
+
+<p><img src="https://blog.lab99.org/pics/golang/context/rpc-fails-3.svg" alt="" /></p>
+
+<p>在主goroutine上有4个RPC，RPC2/3/4是并行请求的，我们这里希望在RPC2请求失败之后，直接返回错误，并且让RPC3/4停止继续计算。这个时候，就使用的到Context。</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;context&quot;
+    &quot;sync&quot;
+    &quot;github.com/pkg/errors&quot;
+)
+
+func Rpc(ctx context.Context, url string) error {
+    result := make(chan int)
+    err := make(chan error)
+
+    go func() {
+        // 进行RPC调用，并且返回是否成功，成功通过result传递成功信息，错误通过error传递错误信息
+        isSuccess := true
+        if isSuccess {
+            result &lt;- 1
+        } else {
+            err &lt;- errors.New(&quot;some error happen&quot;)
+        }
+    }()
+
+    select {
+        case &lt;- ctx.Done():
+            // 其他RPC调用调用失败
+            return ctx.Err()
+        case e := &lt;- err:
+            // 本RPC调用失败，返回错误信息
+            return e
+        case &lt;- result:
+            // 本RPC调用成功，不返回错误信息
+            return nil
+    }
+}
+
+
+func main() {
+    ctx, cancel := context.WithCancel(context.Background())
+
+    // RPC1调用
+    err := Rpc(ctx, &quot;http://rpc_1_url&quot;)
+    if err != nil {
+        return
+    }
+
+    wg := sync.WaitGroup{}
+
+    // RPC2调用
+    wg.Add(1)
+    go func(){
+        defer wg.Done()
+        err := Rpc(ctx, &quot;http://rpc_2_url&quot;)
+        if err != nil {
+            cancel()
+        }
+    }()
+
+    // RPC3调用
+    wg.Add(1)
+    go func(){
+        defer wg.Done()
+        err := Rpc(ctx, &quot;http://rpc_3_url&quot;)
+        if err != nil {
+            cancel()
+        }
+    }()
+
+    // RPC4调用
+    wg.Add(1)
+    go func(){
+        defer wg.Done()
+        err := Rpc(ctx, &quot;http://rpc_4_url&quot;)
+        if err != nil {
+            cancel()
+        }
+    }()
+
+    wg.Wait()
+}
+</code></pre>
+
+<p>当然我这里使用了waitGroup来保证main函数在所有RPC调用完成之后才退出。</p>
+
+<p>在Rpc函数中，第一个参数是一个CancelContext, 这个Context形象的说，就是一个传话筒，在创建CancelContext的时候，返回了一个听声器（ctx）和话筒（cancel函数）。所有的goroutine都拿着这个听声器（ctx），当主goroutine想要告诉所有goroutine要结束的时候，通过cancel函数把结束的信息告诉给所有的goroutine。当然所有的goroutine都需要内置处理这个听声器结束信号的逻辑（ctx-&gt;Done()）。我们可以看Rpc函数内部，通过一个select来判断ctx的done和当前的rpc调用哪个先结束。</p>
+
+<p>这个waitGroup和其中一个RPC调用就通知所有RPC的逻辑，其实有一个包已经帮我们做好了。<a href="https://godoc.org/golang.org/x/sync/errgroup">errorGroup</a> 具体这个errorGroup包的使用可以看这个包的test例子。</p>
+
+<p>有人可能会担心我们这里的cancel()会被多次调用，context包的cancel调用是幂等的。可以放心多次调用。</p>
+
+<p>我们这里不妨品一下，这里的Rpc函数，实际上我们的这个例子里面是一个“阻塞式”的请求，这个请求如果是使用http.Get或者http.Post来实现，实际上Rpc函数的Goroutine结束了，内部的那个实际的http.Get却没有结束。所以，需要理解下，这里的函数最好是“非阻塞”的，比如是http.Do，然后可以通过某种方式进行中断。</p>
+
+<p>比如像这篇文章 <a href="https://medium.com/@ferencfbin/golang-cancel-http-request-using-context-1f45aeba6464">Cancel http.Request using Context</a> 中的这个例子：</p>
+
+<pre><code class="language-go">func httpRequest(
+  ctx context.Context, 
+  client *http.Client, 
+  req *http.Request, 
+  respChan chan []byte, 
+  errChan chan error
+) {
+  req = req.WithContext(ctx)
+  tr := &amp;http.Transport{}
+  client.Transport = tr
+  go func() {
+    resp, err := client.Do(req)
+    if err != nil {
+      errChan &lt;- err
+    }
+    if resp != nil {
+      defer resp.Body.Close()
+      respData, err := ioutil.ReadAll(resp.Body)
+      if err != nil {
+        errChan &lt;- err
+      }
+      respChan &lt;- respData
+    } else {
+      errChan &lt;- errors.New(&quot;HTTP request failed&quot;)
+    }
+  }()
+  for {
+    select {
+    case &lt;-ctx.Done():
+      tr.CancelRequest(req)
+      errChan &lt;- errors.New(&quot;HTTP request cancelled&quot;)
+      return
+    case &lt;-errChan:
+      tr.CancelRequest(req)
+      return
+    }
+  }
+}
+</code></pre>
+
+<p>它使用了http.Client.Do，然后接收到ctx.Done的时候，通过调用transport.CancelRequest来进行结束。</p>
+
+<p>们还可以参考<a href="https://tip.golang.org/src/net/dial.go?s=11446:11534#L351">net/dail/DialContext</a>
+换而言之，如果你希望你实现的包是“可中止/可控制”的，那么你在你包实现的函数里面，最好是能接收一个Context函数，并且处理了Context.Done。</p>
+
+<h2 id="场景二-pipeline">场景二：PipeLine</h2>
+
+<p>pipeline模式就是流水线模型，流水线上的几个工人，有n个产品，一个一个产品进行组装。其实pipeline模型的实现和Context并无关系，没有context我们也能用chan实现pipeline模型。但是对于整条流水线的控制，则是需要使用上Context的。这篇文章<a href="https://medium.com/statuscode/pipeline-patterns-in-go-a37bb3a7e61d">Pipeline Patterns in Go</a>的<a href="https://gist.github.com/claudiofahey/3afcf4f4fb3d8d3b35cadb100d4fb9b7">例子</a>是非常好的说明。这里就大致对这个代码进行下说明。</p>
+
+<p>runSimplePipeline的流水线工人有三个，lineListSource负责将参数一个个分割进行传输，lineParser负责将字符串处理成int64,sink根据具体的值判断这个数据是否可用。他们所有的返回值基本上都有两个chan，一个用于传递数据，一个用于传递错误。（&lt;-chan string, &lt;-chan error）输入基本上也都有两个值，一个是Context，用于传声控制的，一个是(in &lt;-chan)输入产品的。</p>
+
+<p>我们可以看到，这三个工人的具体函数里面，都使用switch处理了case &lt;-ctx.Done()。这个就是生产线上的命令控制。</p>
+
+<pre><code class="language-go">func lineParser(ctx context.Context, base int, in &lt;-chan string) (
+    &lt;-chan int64, &lt;-chan error, error) {
+    ...
+    go func() {
+        defer close(out)
+        defer close(errc)
+
+        for line := range in {
+
+            n, err := strconv.ParseInt(line, base, 64)
+            if err != nil {
+                errc &lt;- err
+                return
+            }
+
+            select {
+            case out &lt;- n:
+            case &lt;-ctx.Done():
+                return
+            }
+        }
+    }()
+    return out, errc, nil
+}
+</code></pre>
+
+<h2 id="超时请求">超时请求</h2>
+
+<p>我们发送RPC请求的时候，往往希望对这个请求进行一个超时的限制。当一个RPC请求超过10s的请求，自动断开。当然我们使用CancelContext，也能实现这个功能（开启一个新的goroutine，这个goroutine拿着cancel函数，当时间到了，就调用cancel函数）。</p>
+
+<p>鉴于这个需求是非常常见的，context包也实现了这个需求：timerCtx。具体实例化的方法是 WithDeadline 和 WithTimeout。</p>
+
+<p>具体的timerCtx里面的逻辑也就是通过time.AfterFunc来调用ctx.cancel的。</p>
+
+<p>官方的例子：</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;context&quot;
+    &quot;fmt&quot;
+    &quot;time&quot;
+)
+
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+    defer cancel()
+
+    select {
+    case &lt;-time.After(1 * time.Second):
+        fmt.Println(&quot;overslept&quot;)
+    case &lt;-ctx.Done():
+        fmt.Println(ctx.Err()) // prints &quot;context deadline exceeded&quot;
+    }
+}
+</code></pre>
+
+<p>在http的客户端里面加上timeout也是一个常见的办法</p>
+
+<pre><code class="language-go">uri := &quot;https://httpbin.org/delay/3&quot;
+req, err := http.NewRequest(&quot;GET&quot;, uri, nil)
+if err != nil {
+    log.Fatalf(&quot;http.NewRequest() failed with '%s'\n&quot;, err)
+}
+
+ctx, _ := context.WithTimeout(context.Background(), time.Millisecond*100)
+req = req.WithContext(ctx)
+
+resp, err := http.DefaultClient.Do(req)
+if err != nil {
+    log.Fatalf(&quot;http.DefaultClient.Do() failed with:\n'%s'\n&quot;, err)
+}
+defer resp.Body.Close()
+</code></pre>
+
+<p>在http服务端设置一个timeout如何做呢？</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;net/http&quot;
+    &quot;time&quot;
+)
+
+func test(w http.ResponseWriter, r *http.Request) {
+    time.Sleep(20 * time.Second)
+    w.Write([]byte(&quot;test&quot;))
+}
+
+
+func main() {
+    http.HandleFunc(&quot;/&quot;, test)
+    timeoutHandler := http.TimeoutHandler(http.DefaultServeMux, 5 * time.Second, &quot;timeout&quot;)
+    http.ListenAndServe(&quot;:8080&quot;, timeoutHandler)
+}
+</code></pre>
+
+<p>我们看看TimeoutHandler的内部，本质上也是通过context.WithTimeout来做处理。</p>
+
+<pre><code class="language-go">func (h *timeoutHandler) ServeHTTP(w ResponseWriter, r *Request) {
+  ...
+        ctx, cancelCtx = context.WithTimeout(r.Context(), h.dt)
+        defer cancelCtx()
+    ...
+    go func() {
+    ...
+        h.handler.ServeHTTP(tw, r)
+    }()
+    select {
+    ...
+    case &lt;-ctx.Done():
+        ...
+    }
+}
+</code></pre>
+
+<h2 id="场景四-http服务器的request互相传递数据">场景四：HTTP服务器的request互相传递数据</h2>
+
+<p>context还提供了valueCtx的数据结构。</p>
+
+<p>这个valueCtx最经常使用的场景就是在一个http服务器中，在request中传递一个特定值，比如有一个中间件，做cookie验证，然后把验证后的用户名存放在request中。</p>
+
+<p>我们可以看到，官方的request里面是包含了Context的，并且提供了WithContext的方法进行context的替换。</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;net/http&quot;
+    &quot;context&quot;
+)
+
+type FooKey string
+
+var UserName = FooKey(&quot;user-name&quot;)
+var UserId = FooKey(&quot;user-id&quot;)
+
+func foo(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        ctx := context.WithValue(r.Context(), UserId, &quot;1&quot;)
+        ctx2 := context.WithValue(ctx, UserName, &quot;yejianfeng&quot;)
+        next(w, r.WithContext(ctx2))
+    }
+}
+
+func GetUserName(context context.Context) string {
+    if ret, ok := context.Value(UserName).(string); ok {
+        return ret
+    }
+    return &quot;&quot;
+}
+
+func GetUserId(context context.Context) string {
+    if ret, ok := context.Value(UserId).(string); ok {
+        return ret
+    }
+    return &quot;&quot;
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte(&quot;welcome: &quot;))
+    w.Write([]byte(GetUserId(r.Context())))
+    w.Write([]byte(&quot; &quot;))
+    w.Write([]byte(GetUserName(r.Context())))
+}
+
+func main() {
+    http.Handle(&quot;/&quot;, foo(test))
+    http.ListenAndServe(&quot;:8080&quot;, nil)
+}
+</code></pre>
+
+<p>在使用ValueCtx的时候需要注意一点，这里的key不应该设置成为普通的String或者Int类型，为了防止不同的中间件对这个key的覆盖。最好的情况是每个中间件使用一个自定义的key类型，比如这里的FooKey，而且获取Value的逻辑尽量也抽取出来作为一个函数，放在这个middleware的同包中。这样，就会有效避免不同包设置相同的key的冲突问题了。</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="结构体元素 结构体由关键字·结构体类型名称和具体对象构成，如下： 结构体初步认识 下面通过对比数组来了解一下结构体：
+ 从存储类型来看  数组只能存储相同的类型： s:=[]string{&amp;ldquo;a&amp;rdquo;, &amp;ldquo;b&amp;rdquo;, &amp;ldquo;c&amp;rdquo;, &amp;ldquo;d&amp;rdquo;, &amp;ldquo;e&amp;rdquo;} 结构体可以存储不同的类型
+//声明结构体 type employee struct{ name,address string age int height,weight float64 }   从内存来看  他们都是在内存中占据连续的内存空间，但对于数组来说，每一个元素所占用的内存大小都是相同的，而结构体每一项所占用的内存大小不一定相同
+ 从类型组合角度看  数组没有组合的用法，例如一个一维数组，一旦数组类型确定就可以再把另一个一维数组设置为元素值，例如：
+s := []string{&amp;ldquo;a&amp;rdquo;, &amp;ldquo;b&amp;rdquo;, &amp;ldquo;c&amp;rdquo;, &amp;ldquo;d&amp;rdquo;, &amp;ldquo;e&amp;rdquo;}
+s[0] = []string{&amp;ldquo;f&amp;rdquo;, &amp;ldquo;g&amp;rdquo;}
+此时运行该程序会出现类似此提示：cannot use []string literal (type []string) as type string in assignment;
+结构体支持组合，我们知道一维空间是一条线，二维空间是一个平面，三维空间是一个空间
+type line struct{ x int } type plane struct{ line y int } type space struct{ plane z int }  我们很自然地通过组合的方式，把一维扩张到二维，把二维扩张到三维，把三维扩张到四维，以此类推。。。。。" />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/structgo/" />
+
+
+<title>
+    
+    Struct In Golang :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="Struct In Golang">
+<meta itemprop="description" content="结构体元素 结构体由关键字·结构体类型名称和具体对象构成，如下： 结构体初步认识 下面通过对比数组来了解一下结构体：
+ 从存储类型来看  数组只能存储相同的类型： s:=[]string{&ldquo;a&rdquo;, &ldquo;b&rdquo;, &ldquo;c&rdquo;, &ldquo;d&rdquo;, &ldquo;e&rdquo;} 结构体可以存储不同的类型
+//声明结构体 type employee struct{ name,address string age int height,weight float64 }   从内存来看  他们都是在内存中占据连续的内存空间，但对于数组来说，每一个元素所占用的内存大小都是相同的，而结构体每一项所占用的内存大小不一定相同
+ 从类型组合角度看  数组没有组合的用法，例如一个一维数组，一旦数组类型确定就可以再把另一个一维数组设置为元素值，例如：
+s := []string{&ldquo;a&rdquo;, &ldquo;b&rdquo;, &ldquo;c&rdquo;, &ldquo;d&rdquo;, &ldquo;e&rdquo;}
+s[0] = []string{&ldquo;f&rdquo;, &ldquo;g&rdquo;}
+此时运行该程序会出现类似此提示：cannot use []string literal (type []string) as type string in assignment;
+结构体支持组合，我们知道一维空间是一条线，二维空间是一个平面，三维空间是一个空间
+type line struct{ x int } type plane struct{ line y int } type space struct{ plane z int }  我们很自然地通过组合的方式，把一维扩张到二维，把二维扩张到三维，把三维扩张到四维，以此类推。。。。。">
+
+
+<meta itemprop="datePublished" content="2019-05-28T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-05-28T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="320">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="Struct In Golang"/>
+<meta name="twitter:description" content="结构体元素 结构体由关键字·结构体类型名称和具体对象构成，如下： 结构体初步认识 下面通过对比数组来了解一下结构体：
+ 从存储类型来看  数组只能存储相同的类型： s:=[]string{&ldquo;a&rdquo;, &ldquo;b&rdquo;, &ldquo;c&rdquo;, &ldquo;d&rdquo;, &ldquo;e&rdquo;} 结构体可以存储不同的类型
+//声明结构体 type employee struct{ name,address string age int height,weight float64 }   从内存来看  他们都是在内存中占据连续的内存空间，但对于数组来说，每一个元素所占用的内存大小都是相同的，而结构体每一项所占用的内存大小不一定相同
+ 从类型组合角度看  数组没有组合的用法，例如一个一维数组，一旦数组类型确定就可以再把另一个一维数组设置为元素值，例如：
+s := []string{&ldquo;a&rdquo;, &ldquo;b&rdquo;, &ldquo;c&rdquo;, &ldquo;d&rdquo;, &ldquo;e&rdquo;}
+s[0] = []string{&ldquo;f&rdquo;, &ldquo;g&rdquo;}
+此时运行该程序会出现类似此提示：cannot use []string literal (type []string) as type string in assignment;
+结构体支持组合，我们知道一维空间是一条线，二维空间是一个平面，三维空间是一个空间
+type line struct{ x int } type plane struct{ line y int } type space struct{ plane z int }  我们很自然地通过组合的方式，把一维扩张到二维，把二维扩张到三维，把三维扩张到四维，以此类推。。。。。"/>
+
+
+
+
+<meta property="article:published_time" content="2019-05-28 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/structgo/">Struct In Golang</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="结构体元素">结构体元素</h1>
+
+<p>结构体由关键字·结构体类型名称和具体对象构成，如下：
+<img src="https://s3.51cto.com/wyfs02/M02/6F/61/wKiom1WaZv2RbnY3AAC_DN43xqI956.jpg" alt="elements" /></p>
+
+<h1 id="结构体初步认识">结构体初步认识</h1>
+
+<p>下面通过对比数组来了解一下结构体：</p>
+
+<ol>
+<li>从存储类型来看</li>
+</ol>
+
+<p>数组只能存储相同的类型：
+s:=[]string{&ldquo;a&rdquo;, &ldquo;b&rdquo;, &ldquo;c&rdquo;, &ldquo;d&rdquo;, &ldquo;e&rdquo;}
+结构体可以存储不同的类型</p>
+
+<pre><code class="language-Go">//声明结构体
+type employee struct{
+    name,address string
+    age int
+    height,weight float64
+}
+</code></pre>
+
+<ol>
+<li>从内存来看</li>
+</ol>
+
+<p>他们都是在内存中占据连续的内存空间，但对于数组来说，每一个元素所占用的内存大小都是相同的，而结构体每一项所占用的内存大小不一定相同</p>
+
+<p><img src="https://s3.51cto.com/wyfs02/M01/6F/5F/wKioL1WacC7ARF99AAB2IrtGm7Q976.jpg" alt="RAMcondition" /></p>
+
+<ol>
+<li>从类型组合角度看</li>
+</ol>
+
+<p>数组没有组合的用法，例如一个一维数组，一旦数组类型确定就可以再把另一个一维数组设置为元素值，例如：</p>
+
+<p>s := []string{&ldquo;a&rdquo;, &ldquo;b&rdquo;, &ldquo;c&rdquo;, &ldquo;d&rdquo;, &ldquo;e&rdquo;}</p>
+
+<p>s[0] = []string{&ldquo;f&rdquo;, &ldquo;g&rdquo;}</p>
+
+<p>此时运行该程序会出现类似此提示：cannot use []string literal (type []string) as type string in assignment;</p>
+
+<p>结构体支持组合，我们知道一维空间是一条线，二维空间是一个平面，三维空间是一个空间</p>
+
+<pre><code class="language-go">type line struct{
+    x int
+}
+
+type plane struct{
+    line
+    y int
+}
+
+type space struct{
+    plane
+    z int
+}
+
+</code></pre>
+
+<p>我们很自然地通过组合的方式，把一维扩张到二维，把二维扩张到三维，把三维扩张到四维，以此类推。。。。。</p>
+
+<ol>
+<li>从操作的角度来看</li>
+</ol>
+
+<p>数组元素的操作是通过下标来完成的：</p>
+
+<pre><code class="language-go">s:=[]string{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;}
+for i:=0;i&lt;len(s);i++{
+    fmt.Println(s[i])     // 打印数组中每一个元素，通过s[i]下标的方式来获取
+}
+</code></pre>
+
+<p>而结构体是通过项名来完成的：</p>
+
+<pre><code class="language-go">t:=space{
+    plane{
+        line{3},5
+        },7
+}
+
+fmt.Println(t.x, t.y, t.z)   // 通过操作结构体的项名t.x、t.y、t.z来获取
+</code></pre>
+
+<ol>
+<li>从比较结构上来看</li>
+</ol>
+
+<p>数组与结构体类似，若判断两个数组是否相同，需要看数组的存储类型，数组长度，每一个元素是否相等，若判断两个结构体是否相同，需要看结构体的类型是否相同，然后看顺序，项的名称，项的类型等等</p>
+
+<h1 id="结构体的初始化">结构体的初始化</h1>
+
+<p>关于数组的初始化可参见<a href="http://www.runoob.com/go/go-arrays.html">这里</a>，相对数组，结构体的初始化有点繁杂，下面一一道来：</p>
+
+<ol>
+<li>空结构体</li>
+</ol>
+
+<p>所谓的空结构体，即结构体的成员为空，如下：</p>
+
+<pre><code class="language-go">type employee struct{
+}
+
+func main(){
+    emp:=employee{} //结构体的初始化，直接使用结构体类型名称后面跟一个大括号
+    fmt.Println(emp)
+}
+</code></pre>
+
+<p>其中employee{}就表示初始化一个结构体，然后赋值给emp，运行就会打印出结果{}，因为该结构体成员为空；可能有读者想，若结构体有成员，同样初始化会有什么结果呢？</p>
+
+<pre><code class="language-go">type employee struct {
+
+   name, address  string  // 姓名、住址
+
+   age         int    // 年龄
+
+   height, weight  float64 // 身高、体重
+
+}
+
+
+
+func main(){
+
+   emp := employee{}   // 这样有什么结果呢？
+
+   fmt.Println(emp)
+
+}
+</code></pre>
+
+<p>运行一下就会发现，结果是{0，0，0}，因为字符串的缺省值为空串，不会显示出来，而int和float64的缺省值为0，所以打印出该结果。其实说白了这就是结构体成员的缺省值问题具体如下图：</p>
+
+<p><img src="https://s3.51cto.com/wyfs02/M02/6F/5F/wKioL1WafAnhdRBGAABTJEO04ow570.jpg" alt="emplyeeinite" /></p>
+
+<ol>
+<li>结构体的初始化</li>
+</ol>
+
+<p>结构体的成员初始化是通过操作成员对象来完成</p>
+
+<pre><code class="language-go">func main(){
+    emp:=employee{}
+    fmt.Println(emp)
+
+    emp.name=&quot;tmac33&quot;
+    emp.age=25
+    fmt.Println(emp)
+}
+</code></pre>
+
+<p>采用变量+&ldquo;.&rdquo;+成员名=值的形式对结构体进行初始化，例如emp.age=38。这种初始化形式很类似C++、Java，那么是否还有其它形式呢？当然，以前说过GO语言就是人的正常思维语言，只要你能想到，基本上就可以正常执行 ：）</p>
+
+<pre><code class="language-go">emp1:=employee{&quot;keji&quot;, &quot;xian&quot;, 19, 183, 65}
+fmt.Println(emp1)
+</code></pre>
+
+<p>这种初始化形式看起来更直观。</p>
+
+<p>读者可能还会问，我只想对其中某几个成员赋值，而上面是对所有成员赋值，还如何办？</p>
+
+<pre><code class="language-go">emp2 := employee{address: &quot;xian&quot;, age: 20}
+
+fmt.Println(emp2)
+</code></pre>
+
+<p>这样只有被指定赋值的成员才能得到真实的值，而未指定赋值的成员则被系统赋予缺省值，这种情况也被称为采用字面值进行初始化</p>
+
+<ol>
+<li>嵌套结构体</li>
+</ol>
+
+<p>这个比较好理解，即结构体里面嵌套结构体，我们把“身高”，“体重” 定义为一个结构体，而“身高”、“体重”是一个human（结构体）的成员，所以可以采用嵌套结构体：</p>
+
+<pre><code class="language-go">type figure struct{
+    height,weight float64
+}
+
+type human struct{
+    name, address string
+    figure
+}
+</code></pre>
+
+<p>即human结构体中包含figure结构体，我们可以采用下面的初始化</p>
+
+<p>man := human{}</p>
+
+<p>fmt.Println(man)</p>
+
+<p>执行结果为{  {0 0}}</p>
+
+<p>结合上面讲的结构体初始化，我们很容易通过字面值对name和address初始化</p>
+
+<p>man.name = &ldquo;tmac33&rdquo;</p>
+
+<p>man.address = &ldquo;xian&rdquo;</p>
+
+<p>但是怎么对嵌套的结构体成员height、weight进行初始化呢？用过面向对象编程的人很容易想到，采用如下方式：</p>
+
+<pre><code class="language-go">func main(){
+    man:=human{}
+    man.name=&quot;tmac33&quot;
+    man.address=&quot;xian&quot;
+
+    man.figure.height = 172.8
+
+    man.figure.weight = 175.3
+
+    fmt.Println(man)
+}
+</code></pre>
+
+<p>即一层层向下找：先找man的成员figure，然后通过figure的成员height对身高进行赋值，这样没有问题，其实GO给我们提供了一种更便捷的赋值方式：</p>
+
+<pre><code class="language-go">man.height = 172.8
+
+man.weight = 175.3
+</code></pre>
+
+<p>即直接对其成员赋值，这种方式简单直接，但会引入“成员可见性”的概念</p>
+
+<ol>
+<li>结构体成员的可见性</li>
+</ol>
+
+<p>任何语言在代码面前都是苍白的，敏捷有一个思想就是代码胜过文档，费话少说，用代码来解释什么是“结构体成员的可见性”</p>
+
+<pre><code class="language-go">// 生物会笑、会哭，所以有哭、笑成员
+
+type biology struct {
+
+   cry, laugh string
+
+}
+
+
+
+// 人会笑、会哭，所以也有哭、笑成员；但同时人嵌套了生物结构体
+
+type human struct {
+
+   biology
+
+   cry, laugh string
+
+}
+</code></pre>
+
+<p>下面采用如下方式对结构体初始化</p>
+
+<p>man := human{}</p>
+
+<p>man.cry = &ldquo;cry&rdquo;</p>
+
+<p>man.laugh = &ldquo;laugh&rdquo;</p>
+
+<p>fmt.Println(man)</p>
+
+<p>那么这里的man.cry，man.laugh是对human的成员赋值呢？还是对biology的成员赋值呢？运行一下结果便可以知道，这里是对human的成员赋值</p>
+
+<p><img src="https://s3.51cto.com/wyfs02/M00/6F/5F/wKioL1WahjbCH1-XAABJlgjXV78216.jpg" alt="谁的值" /></p>
+
+<p>因为内层大括号是空的，为什么这样呢？</p>
+
+<p>可以按剥洋葱的思维来理解，若最外层有此成员名（cry、laugh）则不用再向里面剥了，若最外层没有该成员名，则进一步向里面剥，直到找到为止；</p>
+
+<p>这也就是说，若外层有成员名（cry、laugh），则内层的同名成员是不可见的，若外层没有成员名（cry、laugh），内层的成员才变的可见</p>
+
+<ol>
+<li>再谈嵌套结构体的初始化</li>
+</ol>
+
+<p>以上例来说，我们可以采用字面值的形式初始化：</p>
+
+<p>man := human{}</p>
+
+<p>man.cry = &ldquo;cry&rdquo;</p>
+
+<p>man.laugh = &ldquo;laugh&rdquo;</p>
+
+<p>man.biology.cry = &ldquo;biology cry&rdquo;</p>
+
+<p>man.biology.laugh = &ldquo;biology laugh&rdquo;</p>
+
+<p>其实还可以采用如下的形式：</p>
+
+<pre><code class="language-go">woman:=human{
+    biology:biology{
+        cry: &quot;biology cry&quot;, 
+        laugh: &quot;biology laugh&quot;
+    },
+    cry: &quot;cry&quot;, 
+    laugh: &quot;laugh&quot;
+}
+</code></pre>
+
+<p>还可以简化为：</p>
+
+<pre><code class="language-go">women:=human{
+    biology:biology{
+        &quot;biology cry&quot;, &quot;biology laugh&quot;
+    },
+    cry: &quot;cry&quot;, 
+    laugh: &quot;laugh&quot;
+}
+</code></pre>
+
+<p>还可以简化为：</p>
+
+<pre><code class="language-go">women:=human{
+    {&quot;biology cry&quot;, &quot;biology laugh&quot;}, 
+    &quot;cry&quot;, 
+    &quot;laugh&quot;
+}
+</code></pre>
+
+<p>此时就会抛出如下异常：</p>
+
+<p><img src="https://s3.51cto.com/wyfs02/M00/6F/62/wKiom1WaiYqAE2bqAACJITQRi6Y131.jpg" alt="error" /></p>
+
+<p>你如果够仔细的话，就能发现嵌套结构体就只写了一个结构体类型名，而没有采用value valueType的形式，所以针对这种情况，GO语言认为内部嵌套结构体名称和类型名是同一个</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="简介 Go 语言支持多维数组，以下为常用的多维数组声明方式：
+var variable_name [SIZE1][SIZE2]...[SIZEN] variable_type  以下实例声明了三维的整型数组：
+var threedim [5][10][4]int  二维数组 二维数组是最简单的多维数组，二维数组本质上是由一维数组组成的。二维数组定义方式如下：
+var arrayName [ x ][ y ] variable_type  variable_type 为 Go 语言的数据类型，arrayName 为数组名，二维数组可认为是一个表格，x 为行，y 为列，下图演示了一个二维数组 a 为三行四列：
+二维数组中的元素可通过 a[ i ][ j ] 来访问。
+传统意义上的静态二维数组，声明方式和一维数组一样
+array := [2][3]int{{1, 2, 3}, {4, 5, 6}} for i := range array { for j := range array[i] { fmt.Printf(&amp;quot;%v &amp;quot;, array[i][j]) } fmt.Println() }  输出：" />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/matrix_go/" />
+
+
+<title>
+    
+    Multidimensional Array :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="Multidimensional Array">
+<meta itemprop="description" content="简介 Go 语言支持多维数组，以下为常用的多维数组声明方式：
+var variable_name [SIZE1][SIZE2]...[SIZEN] variable_type  以下实例声明了三维的整型数组：
+var threedim [5][10][4]int  二维数组 二维数组是最简单的多维数组，二维数组本质上是由一维数组组成的。二维数组定义方式如下：
+var arrayName [ x ][ y ] variable_type  variable_type 为 Go 语言的数据类型，arrayName 为数组名，二维数组可认为是一个表格，x 为行，y 为列，下图演示了一个二维数组 a 为三行四列：
+二维数组中的元素可通过 a[ i ][ j ] 来访问。
+传统意义上的静态二维数组，声明方式和一维数组一样
+array := [2][3]int{{1, 2, 3}, {4, 5, 6}} for i := range array { for j := range array[i] { fmt.Printf(&quot;%v &quot;, array[i][j]) } fmt.Println() }  输出：">
+
+
+<meta itemprop="datePublished" content="2015-12-29T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-12-29T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="313">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="Multidimensional Array"/>
+<meta name="twitter:description" content="简介 Go 语言支持多维数组，以下为常用的多维数组声明方式：
+var variable_name [SIZE1][SIZE2]...[SIZEN] variable_type  以下实例声明了三维的整型数组：
+var threedim [5][10][4]int  二维数组 二维数组是最简单的多维数组，二维数组本质上是由一维数组组成的。二维数组定义方式如下：
+var arrayName [ x ][ y ] variable_type  variable_type 为 Go 语言的数据类型，arrayName 为数组名，二维数组可认为是一个表格，x 为行，y 为列，下图演示了一个二维数组 a 为三行四列：
+二维数组中的元素可通过 a[ i ][ j ] 来访问。
+传统意义上的静态二维数组，声明方式和一维数组一样
+array := [2][3]int{{1, 2, 3}, {4, 5, 6}} for i := range array { for j := range array[i] { fmt.Printf(&quot;%v &quot;, array[i][j]) } fmt.Println() }  输出："/>
+
+
+
+
+<meta property="article:published_time" content="2015-12-29 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/matrix_go/">Multidimensional Array</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="简介">简介</h1>
+
+<p>Go 语言支持多维数组，以下为常用的多维数组声明方式：</p>
+
+<pre><code class="language-go">var variable_name [SIZE1][SIZE2]...[SIZEN] variable_type
+</code></pre>
+
+<p>以下实例声明了三维的整型数组：</p>
+
+<pre><code class="language-go">var threedim [5][10][4]int
+</code></pre>
+
+<h1 id="二维数组">二维数组</h1>
+
+<p>二维数组是最简单的多维数组，二维数组本质上是由一维数组组成的。二维数组定义方式如下：</p>
+
+<pre><code class="language-go">var arrayName [ x ][ y ] variable_type
+</code></pre>
+
+<p>variable_type 为 Go 语言的数据类型，arrayName 为数组名，二维数组可认为是一个表格，x 为行，y 为列，下图演示了一个二维数组 a 为三行四列：</p>
+
+<p><img src="http://www.runoob.com/wp-content/uploads/2015/06/two_dimensional_arrays.jpg" alt="三行四列" /></p>
+
+<p>二维数组中的元素可通过 a[ i ][ j ] 来访问。</p>
+
+<p>传统意义上的静态二维数组，声明方式和一维数组一样</p>
+
+<pre><code class="language-go">array := [2][3]int{{1, 2, 3}, {4, 5, 6}}
+for i := range array {
+    for j := range array[i] {
+        fmt.Printf(&quot;%v &quot;, array[i][j])
+    }
+    fmt.Println()
+}
+</code></pre>
+
+<p>输出：</p>
+
+<pre><code class="language-go">1 2 3 
+4 5 6
+</code></pre>
+
+<p>另一种方式就是使用Go中的Slice，即声明一个Slice数组，每个成员又是一个Slice，每个Slice的长度可以不一样。就是一个二维Slice。</p>
+
+<pre><code class="language-go">array := make([][]int, 5)
+
+// 创建二维Slice
+for i := range array {
+    subArray := make([]int, i+1)
+    for j := range subArray {
+        subArray[j] = j + 1
+    }
+    array[i] = subArray
+}
+
+// 输出
+for i := range array {
+    for j := range array[i] {
+        fmt.Printf(&quot;%v &quot;, array[i][j])
+    }
+    fmt.Println()
+}
+</code></pre>
+
+<p>输出：</p>
+
+<pre><code class="language-go">1 
+1 2 
+1 2 3 
+1 2 3 4 
+1 2 3 4 5 
+</code></pre>
+
+<h1 id="初始化二维数组">初始化二维数组</h1>
+
+<p>多维数组可通过大括号来初始值。以下实例为一个 3 行 4 列的二维数组：</p>
+
+<pre><code class="language-go">
+a = [3][4]int{  
+ {0, 1, 2, 3} ,   /*  第一行索引为 0 */
+ {4, 5, 6, 7} ,   /*  第二行索引为 1 */
+ {8, 9, 10, 11},   /* 第三行索引为 2 */
+}
+
+</code></pre>
+
+<p><strong>注意：</strong> 以上代码中倒数第二行的 } 必须要有逗号，因为最后一行的 } 不能单独一行，也可以写成这样：</p>
+
+<pre><code class="language-go">a = [3][4]int{  
+ {0, 1, 2, 3} ,   /*  第一行索引为 0 */
+ {4, 5, 6, 7} ,   /*  第二行索引为 1 */
+ {8, 9, 10, 11}}   /* 第三行索引为 2 */
+</code></pre>
+
+<h1 id="访问二维数组">访问二维数组</h1>
+
+<p>二维数组通过指定坐标来访问。如数组中的行索引与列索引，例如：</p>
+
+<pre><code class="language-go">val := a[2][3]
+或
+var value int = a[2][3]
+</code></pre>
+
+<p>以上实例访问了二维数组 val 第三行的第四个元素。</p>
+
+<p>二维数组可以使用循环嵌套来输出元素：</p>
+
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+   /* 数组 - 5 行 2 列*/
+   var a = [5][2]int{ {0,0}, {1,2}, {2,4}, {3,6},{4,8}}
+   var i, j int
+
+   /* 输出数组元素 */
+   for  i = 0; i &lt; 5; i++ {
+      for j = 0; j &lt; 2; j++ {
+         fmt.Printf(&quot;a[%d][%d] = %d\n&quot;, i,j, a[i][j] )
+      }
+   }
+}
+</code></pre>
+
+<p>以上实例运行输出结果为：</p>
+
+<pre><code class="language-go">a[0][0] = 0
+a[0][1] = 0
+a[1][0] = 1
+a[1][1] = 2
+a[2][0] = 2
+a[2][1] = 4
+a[3][0] = 3
+a[3][1] = 6
+a[4][0] = 4
+a[4][1] = 8
+</code></pre>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

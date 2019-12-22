@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="看Url就知道要什么 看http method就知道干什么 看http status code就知道结果如何
+ REST &amp;ndash; REpreseantational State Transfer @Ivony 老师的一句话很精辟： &amp;gt; URL定位资源，用HTTP动词（GET,POST,DELETE,DETC)描述操作
+先说REST名称 REST &amp;ndash; REpresentational State Transfer首先，之所以晦涩是因为前面主语被去掉了，全称是 Resource Representational State Transfer：通俗来讲就是：资源在网络中以某种表现形式进行状态转移。分解开来：Resource：资源，即数据（前面说过网络的核心）。比如 newsfeed，friends等；Representational：某种表现形式，比如用JSON，XML，JPEG等；State Transfer：状态变化。通过HTTP动词实现。
+REST的出处 Roy Fielding的毕业论文。这哥们参与设计HTTP协议，也是Apache Web Server项目（可惜现在已经是 nginx 的天下）的co-founder。PhD的毕业学校是 UC Irvine，Irvine在加州，有着充裕的阳光和美丽的海滩，是著名的富人区。Oculus VR 的总部就坐落于此（虚拟现实眼镜，被FB收购，CTO为Quake和Doom的作者 John Carmack）。
+论文地址
+为什么要使用RESTful结构 大家都知道&amp;rdquo;古代&amp;rdquo;网页是前端后端融在一起的，比如之前的PHP，JSP等。在之前的桌面时代问题不大，但是近年来移动互联网的发展，各种类型的Client层出不穷，RESTful可以通过一套统一的接口为 Web，iOS和Android提供服务。另外对于广大平台来说，比如Facebook platform，微博开放平台，微信公共平台等，它们不需要有显式的前端，只需要一套提供服务的接口，于是RESTful更是它们最好的选择。在RESTful架构下：
+Server的API如何设计才满足RESTful要求?  URL root: https://example.org/api/v1/* https://api.example.com/v1/*
+ API versioning: 可以放在URL里面，也可以用HTTP的header： /api/v1/
+ URI使用名词而不是动词，且推荐用复数。
+  BAD
+ /getProducts /listOrders /retrieveClientByOrder?orderId=1  GOOD" />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/restful/" />
+
+
+<title>
+    
+    通俗解释REST以及RESTful :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="通俗解释REST以及RESTful">
+<meta itemprop="description" content="看Url就知道要什么 看http method就知道干什么 看http status code就知道结果如何
+ REST &ndash; REpreseantational State Transfer @Ivony 老师的一句话很精辟： &gt; URL定位资源，用HTTP动词（GET,POST,DELETE,DETC)描述操作
+先说REST名称 REST &ndash; REpresentational State Transfer首先，之所以晦涩是因为前面主语被去掉了，全称是 Resource Representational State Transfer：通俗来讲就是：资源在网络中以某种表现形式进行状态转移。分解开来：Resource：资源，即数据（前面说过网络的核心）。比如 newsfeed，friends等；Representational：某种表现形式，比如用JSON，XML，JPEG等；State Transfer：状态变化。通过HTTP动词实现。
+REST的出处 Roy Fielding的毕业论文。这哥们参与设计HTTP协议，也是Apache Web Server项目（可惜现在已经是 nginx 的天下）的co-founder。PhD的毕业学校是 UC Irvine，Irvine在加州，有着充裕的阳光和美丽的海滩，是著名的富人区。Oculus VR 的总部就坐落于此（虚拟现实眼镜，被FB收购，CTO为Quake和Doom的作者 John Carmack）。
+论文地址
+为什么要使用RESTful结构 大家都知道&rdquo;古代&rdquo;网页是前端后端融在一起的，比如之前的PHP，JSP等。在之前的桌面时代问题不大，但是近年来移动互联网的发展，各种类型的Client层出不穷，RESTful可以通过一套统一的接口为 Web，iOS和Android提供服务。另外对于广大平台来说，比如Facebook platform，微博开放平台，微信公共平台等，它们不需要有显式的前端，只需要一套提供服务的接口，于是RESTful更是它们最好的选择。在RESTful架构下：
+Server的API如何设计才满足RESTful要求?  URL root: https://example.org/api/v1/* https://api.example.com/v1/*
+ API versioning: 可以放在URL里面，也可以用HTTP的header： /api/v1/
+ URI使用名词而不是动词，且推荐用复数。
+  BAD
+ /getProducts /listOrders /retrieveClientByOrder?orderId=1  GOOD">
+
+
+<meta itemprop="datePublished" content="2019-06-18T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-06-18T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="159">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="通俗解释REST以及RESTful"/>
+<meta name="twitter:description" content="看Url就知道要什么 看http method就知道干什么 看http status code就知道结果如何
+ REST &ndash; REpreseantational State Transfer @Ivony 老师的一句话很精辟： &gt; URL定位资源，用HTTP动词（GET,POST,DELETE,DETC)描述操作
+先说REST名称 REST &ndash; REpresentational State Transfer首先，之所以晦涩是因为前面主语被去掉了，全称是 Resource Representational State Transfer：通俗来讲就是：资源在网络中以某种表现形式进行状态转移。分解开来：Resource：资源，即数据（前面说过网络的核心）。比如 newsfeed，friends等；Representational：某种表现形式，比如用JSON，XML，JPEG等；State Transfer：状态变化。通过HTTP动词实现。
+REST的出处 Roy Fielding的毕业论文。这哥们参与设计HTTP协议，也是Apache Web Server项目（可惜现在已经是 nginx 的天下）的co-founder。PhD的毕业学校是 UC Irvine，Irvine在加州，有着充裕的阳光和美丽的海滩，是著名的富人区。Oculus VR 的总部就坐落于此（虚拟现实眼镜，被FB收购，CTO为Quake和Doom的作者 John Carmack）。
+论文地址
+为什么要使用RESTful结构 大家都知道&rdquo;古代&rdquo;网页是前端后端融在一起的，比如之前的PHP，JSP等。在之前的桌面时代问题不大，但是近年来移动互联网的发展，各种类型的Client层出不穷，RESTful可以通过一套统一的接口为 Web，iOS和Android提供服务。另外对于广大平台来说，比如Facebook platform，微博开放平台，微信公共平台等，它们不需要有显式的前端，只需要一套提供服务的接口，于是RESTful更是它们最好的选择。在RESTful架构下：
+Server的API如何设计才满足RESTful要求?  URL root: https://example.org/api/v1/* https://api.example.com/v1/*
+ API versioning: 可以放在URL里面，也可以用HTTP的header： /api/v1/
+ URI使用名词而不是动词，且推荐用复数。
+  BAD
+ /getProducts /listOrders /retrieveClientByOrder?orderId=1  GOOD"/>
+
+
+
+
+<meta property="article:published_time" content="2019-06-18 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/restful/">通俗解释REST以及RESTful</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<blockquote>
+<p>看Url就知道要什么
+看http method就知道干什么
+看http status code就知道结果如何</p>
+</blockquote>
+
+<h1 id="rest-represeantational-state-transfer">REST &ndash; REpreseantational State Transfer</h1>
+
+<p>@Ivony 老师的一句话很精辟：
+&gt; URL定位资源，用HTTP动词（GET,POST,DELETE,DETC)描述操作</p>
+
+<h1 id="先说rest名称">先说REST名称</h1>
+
+<p>REST &ndash; REpresentational State Transfer首先，之所以晦涩是因为前面主语被去掉了，全称是 Resource Representational State Transfer：通俗来讲就是：资源在网络中以某种表现形式进行状态转移。分解开来：Resource：资源，即数据（前面说过网络的核心）。比如 newsfeed，friends等；Representational：某种表现形式，比如用JSON，XML，JPEG等；State Transfer：状态变化。通过HTTP动词实现。</p>
+
+<h1 id="rest的出处">REST的出处</h1>
+
+<p>Roy Fielding的毕业论文。这哥们参与设计HTTP协议，也是Apache Web Server项目（可惜现在已经是 nginx 的天下）的co-founder。PhD的毕业学校是 UC Irvine，Irvine在加州，有着充裕的阳光和美丽的海滩，是著名的富人区。Oculus VR 的总部就坐落于此（虚拟现实眼镜，被FB收购，CTO为Quake和Doom的作者 John Carmack）。</p>
+
+<p><a href="https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">论文地址</a></p>
+
+<h1 id="为什么要使用restful结构">为什么要使用RESTful结构</h1>
+
+<p>大家都知道&rdquo;古代&rdquo;网页是前端后端融在一起的，比如之前的PHP，JSP等。在之前的桌面时代问题不大，但是近年来移动互联网的发展，各种类型的Client层出不穷，RESTful可以通过一套统一的接口为 Web，iOS和Android提供服务。另外对于广大平台来说，比如Facebook platform，微博开放平台，微信公共平台等，它们不需要有显式的前端，只需要一套提供服务的接口，于是RESTful更是它们最好的选择。在RESTful架构下：</p>
+
+<p><img src="https://pic4.zhimg.com/80/06ee404783540f0af299042057738a99_hd.jpg" alt="" /></p>
+
+<h1 id="server的api如何设计才满足restful要求">Server的API如何设计才满足RESTful要求?</h1>
+
+<ol>
+<li><p>URL root:
+<a href="https://example.org/api/v1/*">https://example.org/api/v1/*</a>
+<a href="https://api.example.com/v1/*">https://api.example.com/v1/*</a></p></li>
+
+<li><p>API versioning:
+可以放在URL里面，也可以用HTTP的header：
+/api/v1/</p></li>
+
+<li><p>URI使用名词而不是动词，且推荐用复数。</p></li>
+</ol>
+
+<p>BAD</p>
+
+<ul>
+<li>/getProducts</li>
+<li>/listOrders</li>
+<li>/retrieveClientByOrder?orderId=1</li>
+</ul>
+
+<p>GOOD</p>
+
+<ul>
+<li>GET /products : will return the list of all products</li>
+<li>POST /products : will add a product to the collection</li>
+<li>GET /products/4 : will retrieve product #4</li>
+<li>PATCH/PUT /products/4 : will update product #4</li>
+</ul>
+
+<ol>
+<li>保证 HEAD 和 GET 方法是安全的，不会对资源状态有所改变（污染）。比如严格杜绝如下情况：</li>
+</ol>
+
+<p>GET /deleteProduct?id=1</p>
+
+<ol>
+<li><p>资源的地址推荐用嵌套结构。比如：
+GET /friends/10375923/profile
+UPDATE /profile/primaryAddress/city</p></li>
+
+<li><p>警惕返回结果的大小。如果过大，及时进行分页（pagination）或者加入限制（limit）。</p></li>
+</ol>
+
+<p>HTTP协议支持分页（Pagination）操作，在Header中使用 Link 即可。</p>
+
+<ol>
+<li><p>使用正确的HTTP Status Code表示访问状态：HTTP/1.1: Status Code Definitions</p></li>
+
+<li><p>在返回结果用明确易懂的文本（String。注意返回的错误是要给人看的，避免用 1001 这种错误信息），而且适当地加入注释。</p></li>
+
+<li><p>关于安全：自己的接口就用https，加上一个key做一次hash放在最后即可。考虑到国情，HTTPS在无线网络里不稳定，可以使用Application Level的加密手段把整个HTTP的payload加密。有兴趣的朋友可以用手机连上电脑的共享Wi-Fi，然后用Charles监听微信的网络请求（发照片或者刷朋友圈)。</p></li>
+</ol>
+
+<h1 id="各端的具体实现">各端的具体实现</h1>
+
+<p>如上面的图所示，Server统一提供一套RESTful API，web+ios+android作为同等公民调用API。各端发展到现在，都有一套比较成熟的框架来帮开发者事半功倍。</p>
+
+<p>&ndash; Server &ndash;
+推荐： Spring MVC 或者 Jersey 或者 Play Framework</p>
+
+<p>&ndash; Android &ndash;
+推荐： RetroFit 或者 Volley</p>
+
+<p>&ndash; iOS &ndash;
+推荐：RestKit ( RestKit/RestKit · GitHub )</p>
+
+<p>&ndash; Web &ndash;
+推荐随便搞！可以用重量级的AngularJS，也可以用轻量级 Backbone + jQuery 等。</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="缘由 很早就听说了Golang的大名，只是远观（当时觉得太难了＝ ＝） 刚到公司的时候，研究过一段时间的coreos—-大部分都是Golang写的，还是觉得语法很啰嗦…… 几个月之前，老大就跟我谈过新系统可能用Golang来写，弥补我司只有Python这条技术线的弊端。 所以买了个视频学Golang，但是没有开始上手做东西，只是跟着教程了解了一些特性，然后就荒废了。
+由于最近开始研究Python性能提升的可能，异步库gevent，直接的epoll，非拷贝的meoryview各种黑科技都用上，但是并发10K rps实在是没办法跨过的一道坎，索性，反正都是epoll/kevent，直接换Golang试试。
+理解 后端开发，如果没有听过，Do not communicate by sharing memory; instead, share memory by communicating.那么你的地位可能就危险了。 前者需要考虑加锁避免race condition,加锁又会提高开发以及调试难度。而后者则可以将对共享memory的访问串行化，于是不用考虑race condition。
+放例子 package main import &amp;quot;fmt&amp;quot; import &amp;quot;time&amp;quot; func fibonacci(c, quit chan int) { x, y := 1, 1 for { select { case c &amp;lt;- x: x, y = y, x&#43;y case &amp;lt;- quit: fmt.Println(&amp;quot;quit&amp;quot;) return } } } func show(c, quit chan int) { for i := 0; i &amp;lt; 10; i &#43;&#43; { fmt." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/elegantchannel/" />
+
+
+<title>
+    
+    优雅的多channel通信（GoLang) :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="优雅的多channel通信（GoLang)">
+<meta itemprop="description" content="Do not communicate by sharing memory; instead, share memory by communicating.">
+
+
+<meta itemprop="datePublished" content="2019-04-19T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-04-19T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="107">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="优雅的多channel通信（GoLang)"/>
+<meta name="twitter:description" content="Do not communicate by sharing memory; instead, share memory by communicating."/>
+
+
+
+
+<meta property="article:published_time" content="2019-04-19 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/elegantchannel/">优雅的多channel通信（GoLang)</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="缘由">缘由</h1>
+
+<p>很早就听说了Golang的大名，只是远观（当时觉得太难了＝ ＝）
+刚到公司的时候，研究过一段时间的coreos—-大部分都是Golang写的，还是觉得语法很啰嗦……
+几个月之前，老大就跟我谈过新系统可能用Golang来写，弥补我司只有Python这条技术线的弊端。
+所以买了个视频学Golang，但是没有开始上手做东西，只是跟着教程了解了一些特性，然后就荒废了。</p>
+
+<p>由于最近开始研究Python性能提升的可能，异步库gevent，直接的epoll，非拷贝的meoryview各种黑科技都用上，但是并发10K rps实在是没办法跨过的一道坎，索性，反正都是epoll/kevent，直接换Golang试试。</p>
+
+<h1 id="理解">理解</h1>
+
+<p>后端开发，如果没有听过，Do not communicate by sharing memory; instead, share memory by communicating.那么你的地位可能就危险了。
+前者需要考虑加锁避免race condition,加锁又会提高开发以及调试难度。而后者则可以将对共享memory的访问串行化，于是不用考虑race condition。</p>
+
+<h1 id="放例子">放例子</h1>
+
+<pre><code class="language-go">package main  
+
+import &quot;fmt&quot;  
+import &quot;time&quot;  
+
+func fibonacci(c, quit chan int) {  
+
+        x, y := 1, 1  
+
+        for {  
+                select {  
+
+                        case c &lt;- x:  
+                                x, y = y, x+y  
+
+                        case &lt;- quit:  
+                                fmt.Println(&quot;quit&quot;)  
+                                return  
+
+                }  
+        }  
+}  
+
+func show(c, quit chan int) {  
+
+        for i := 0; i &lt; 10; i ++ {  
+
+                fmt.Println(&lt;- c)  
+        }  
+
+        quit &lt;- 0  
+
+}  
+
+func main() {  
+
+        data := make(chan int)  
+        leave := make(chan int)  
+
+        go show(data, leave)  
+        go fibonacci(data, leave)  
+
+        for {  
+
+                time.Sleep(100)  
+        }  
+
+}  
+</code></pre>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="类型断言解析 经常地我们对一个接口值的动态类型是不确定的，如方法的形参为接口类型时，此时就需要检验它是否符合我们需要的类型。 类型断言是一个使用在 接口值上 的操作。
+断言类型的语法：x.(T) 这里x表示一个接口的类型，T表示一个类型（也可为接口类型）。 一个类型断言检查一个接口对象x的动态类型是否和断言的类型T匹配。
+类型断言分两种情况： 第一种，如果断言的类型T是一个具体类型，类型断言x.(T)就检查x的动态类型是否和T的类型相同。
+ 如果这个检查成功了，类型断言的结果是一个类型为T的对象，该对象的值为接口变量x的动态值。换句话说，具体类型的类型断言从它的操作对象中获得具体的值。 如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(*os.File)  第二种，如果断言的类型T是一个接口类型，类型断言x.(T)检查x的动态类型是否满足T接口。
+ 如果这个检查成功，则检查结果的接口值的动态类型和动态值不变，但是该接口值的类型被转换为接口类型T。换句话说，对一个接口类型的类型断言改变了类型的表述方式，改变了可以获取的方法集合（通常更大），但是它保护了接口值内部的动态类型和值的部分。 如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(io.ReadWriter)  注意：
+如果断言的操作对象x是一个nil接口值，那么不论被断言的类型T是什么这个类型断言都会失败。 我们几乎不需要对一个更少限制性的接口类型（更少的方法集合）做断言，因为它表现的就像赋值操作一样，除了对于nil接口值的情况。
+//interface type Tester interface{ getName() string } type Teater2 interface{ printName() } //person类型 type Person struct{ name string } func (p Person)getName() string { return p.name } func (p Person) printName() { fmt.Println(p.name) } func main(){ var t Tester t=Person{&amp;quot;tmac&amp;quot;} check(t) } func check(t Tester) { //第一种情况 if f,ok1:=t." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/go_type_assertion/" />
+
+
+<title>
+    
+    Go的类型断言与使用 :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="Go的类型断言与使用">
+<meta itemprop="description" content="类型断言解析 经常地我们对一个接口值的动态类型是不确定的，如方法的形参为接口类型时，此时就需要检验它是否符合我们需要的类型。 类型断言是一个使用在 接口值上 的操作。
+断言类型的语法：x.(T) 这里x表示一个接口的类型，T表示一个类型（也可为接口类型）。 一个类型断言检查一个接口对象x的动态类型是否和断言的类型T匹配。
+类型断言分两种情况： 第一种，如果断言的类型T是一个具体类型，类型断言x.(T)就检查x的动态类型是否和T的类型相同。
+ 如果这个检查成功了，类型断言的结果是一个类型为T的对象，该对象的值为接口变量x的动态值。换句话说，具体类型的类型断言从它的操作对象中获得具体的值。 如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(*os.File)  第二种，如果断言的类型T是一个接口类型，类型断言x.(T)检查x的动态类型是否满足T接口。
+ 如果这个检查成功，则检查结果的接口值的动态类型和动态值不变，但是该接口值的类型被转换为接口类型T。换句话说，对一个接口类型的类型断言改变了类型的表述方式，改变了可以获取的方法集合（通常更大），但是它保护了接口值内部的动态类型和值的部分。 如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(io.ReadWriter)  注意：
+如果断言的操作对象x是一个nil接口值，那么不论被断言的类型T是什么这个类型断言都会失败。 我们几乎不需要对一个更少限制性的接口类型（更少的方法集合）做断言，因为它表现的就像赋值操作一样，除了对于nil接口值的情况。
+//interface type Tester interface{ getName() string } type Teater2 interface{ printName() } //person类型 type Person struct{ name string } func (p Person)getName() string { return p.name } func (p Person) printName() { fmt.Println(p.name) } func main(){ var t Tester t=Person{&quot;tmac&quot;} check(t) } func check(t Tester) { //第一种情况 if f,ok1:=t.">
+
+
+<meta itemprop="datePublished" content="2019-05-29T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-05-29T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="250">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="Go的类型断言与使用"/>
+<meta name="twitter:description" content="类型断言解析 经常地我们对一个接口值的动态类型是不确定的，如方法的形参为接口类型时，此时就需要检验它是否符合我们需要的类型。 类型断言是一个使用在 接口值上 的操作。
+断言类型的语法：x.(T) 这里x表示一个接口的类型，T表示一个类型（也可为接口类型）。 一个类型断言检查一个接口对象x的动态类型是否和断言的类型T匹配。
+类型断言分两种情况： 第一种，如果断言的类型T是一个具体类型，类型断言x.(T)就检查x的动态类型是否和T的类型相同。
+ 如果这个检查成功了，类型断言的结果是一个类型为T的对象，该对象的值为接口变量x的动态值。换句话说，具体类型的类型断言从它的操作对象中获得具体的值。 如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(*os.File)  第二种，如果断言的类型T是一个接口类型，类型断言x.(T)检查x的动态类型是否满足T接口。
+ 如果这个检查成功，则检查结果的接口值的动态类型和动态值不变，但是该接口值的类型被转换为接口类型T。换句话说，对一个接口类型的类型断言改变了类型的表述方式，改变了可以获取的方法集合（通常更大），但是它保护了接口值内部的动态类型和值的部分。 如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(io.ReadWriter)  注意：
+如果断言的操作对象x是一个nil接口值，那么不论被断言的类型T是什么这个类型断言都会失败。 我们几乎不需要对一个更少限制性的接口类型（更少的方法集合）做断言，因为它表现的就像赋值操作一样，除了对于nil接口值的情况。
+//interface type Tester interface{ getName() string } type Teater2 interface{ printName() } //person类型 type Person struct{ name string } func (p Person)getName() string { return p.name } func (p Person) printName() { fmt.Println(p.name) } func main(){ var t Tester t=Person{&quot;tmac&quot;} check(t) } func check(t Tester) { //第一种情况 if f,ok1:=t."/>
+
+
+
+
+<meta property="article:published_time" content="2019-05-29 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/go_type_assertion/">Go的类型断言与使用</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="类型断言解析">类型断言解析</h1>
+
+<p>经常地我们对一个接口值的动态类型是不确定的，如方法的形参为接口类型时，此时就需要检验它是否符合我们需要的类型。
+类型断言是一个使用在 <strong>接口值上</strong> 的操作。</p>
+
+<h2 id="断言类型的语法-x-t">断言类型的语法：x.(T)</h2>
+
+<p>这里x表示一个接口的类型，T表示一个类型（也可为接口类型）。
+一个类型断言检查一个接口对象x的动态类型是否和断言的类型T匹配。</p>
+
+<p>类型断言分两种情况：
+<strong>第一种，如果断言的类型T是一个具体类型，类型断言x.(T)就检查x的动态类型是否和T的类型相同。</strong></p>
+
+<ul>
+<li>如果这个检查成功了，类型断言的结果是一个类型为T的对象，该对象的值为接口变量x的动态值。换句话说，具体类型的类型断言从它的操作对象中获得具体的值。</li>
+<li>如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(*os.File)</li>
+</ul>
+
+<p><strong>第二种，如果断言的类型T是一个接口类型，类型断言x.(T)检查x的动态类型是否满足T接口。</strong></p>
+
+<ul>
+<li>如果这个检查成功，则检查结果的接口值的动态类型和动态值不变，但是该接口值的类型被转换为接口类型T。换句话说，对一个接口类型的类型断言改变了类型的表述方式，改变了可以获取的方法集合（通常更大），但是它保护了接口值内部的动态类型和值的部分。</li>
+<li>如果检查失败，接下来这个操作会抛出panic，除非用两个变量来接收检查结果，如：f, ok := w.(io.ReadWriter)</li>
+</ul>
+
+<p>注意：</p>
+
+<p>如果断言的操作对象x是一个nil接口值，那么不论被断言的类型T是什么这个类型断言都会失败。
+我们几乎不需要对一个更少限制性的接口类型（更少的方法集合）做断言，因为它表现的就像赋值操作一样，除了对于nil接口值的情况。</p>
+
+<pre><code class="language-go">//interface
+type Tester interface{
+    getName() string
+}
+
+type Teater2 interface{
+    printName()
+}
+
+//person类型
+type Person struct{
+    name string
+}
+
+func (p Person)getName() string {
+    return p.name
+}
+
+func (p Person) printName() {
+    fmt.Println(p.name)
+}
+
+func main(){
+    var t Tester
+    t=Person{&quot;tmac&quot;}
+    check(t)
+}
+
+func check(t Tester) {
+    //第一种情况
+    if f,ok1:=t.(Person); ok1{
+        fmt.Printf(&quot;%T\n%s\n&quot;,f,f.getName())
+    }
+    //第二种情况
+    if t, ok2 := t.(Tester2);ok2 {  //重用变量名t（无需重新声明）
+        check2(t) //若类型断言为true，则新的t被转型为Tester2接口类型，但其动态类型和动态值不变
+    }
+}
+
+func check2(t Tester2)  {
+    t.printName()
+}
+
+</code></pre>
+
+<p>输出结果：</p>
+
+<pre><code class="language-go">main.Person
+tmac
+tmac
+</code></pre>
+
+<h1 id="断言的使用">断言的使用</h1>
+
+<p>golang的语言中提供了断言的功能。golang中的所有程序都实现了interface{}的接口，这意味着，所有的类型如string,int,int64甚至是自定义的struct类型都就此拥有了interface{}的接口，这种做法和java中的Object类型比较类似。那么在一个数据通过func funcName(interface{})的方式传进来的时候，也就意味着这个参数被自动的转为interface{}的类型。</p>
+
+<p>如以下的代码：</p>
+
+<pre><code class="language-go">func funcName(a interface{}) string{
+    return(a)
+}
+</code></pre>
+
+<p>编译器将返回：
+cannot convert a (type interface{}) to type string: need type assertion</p>
+
+<p>此时，意味着整个转化的过程需要类型断言。类型断言有以下几种形式：</p>
+
+<ol>
+<li>直接断言使用</li>
+</ol>
+
+<p>var a interface{}</p>
+
+<p>fmt.Println(&ldquo;Where are you,Jonny?&rdquo;, a.(string))</p>
+
+<p>但是如果断言失败一般会导致panic的发生。所以为了防止panic的发生，我们需要在断言前进行一定的判断</p>
+
+<p>value, ok := a.(string)</p>
+
+<p>如果断言失败，那么ok的值将会是false,但是如果断言成功ok的值将会是true,同时value将会得到所期待的正确的值。示例：</p>
+
+<pre><code class="language-go">value,ok:=a.(string)
+if !ok{
+    fmt.Println(&quot;It's not ok for type string&quot;)
+    return
+}
+
+fmt.Println(&quot;The value is &quot;, value)
+
+</code></pre>
+
+<p>另外也可以配合switch语句进行判断：</p>
+
+<pre><code class="language-go">var t interface{}
+
+t = functionOfSomeType()
+switch t := t.(type) {
+default:
+    fmt.Printf(&quot;unexpected type %T&quot;, t)       // %T prints whatever type t has
+case bool:
+    fmt.Printf(&quot;boolean %t\n&quot;, t)             // t has type bool
+case int:
+    fmt.Printf(&quot;integer %d\n&quot;, t)             // t has type int
+case *bool:
+    fmt.Printf(&quot;pointer to boolean %t\n&quot;, *t) // t has type *bool
+case *int:
+    fmt.Printf(&quot;pointer to integer %d\n&quot;, *t) // t has type *int
+}
+
+</code></pre>
+
+<p>另外补充几个go语言编程的小tips
+1）如果不符合要求可以尽快的return（return as fast as you can），而减少else语句的使用，这样可以更加直观一些。</p>
+
+<p>2）转换类型的时候如果是string可以不用断言，使用fmt.Sprint()函数可以达到想要的效果</p>
+
+<p>3）变量的定义和申明可以用组的方式，如：</p>
+
+<pre><code class="language-go">var (
+   a string
+   b int
+   c int64
+   ...
+)
+
+
+import (
+    &quot;fmt&quot;
+    &quot;strings&quot;
+    &quot;net/http&quot;
+   ...
+)
+
+</code></pre>
+
+<p>4) 函数逻辑比较复杂，可以把一些逻辑封装成一个函数，提高可读性。
+5）使用net/http包和net/url包的函数，可能会带有url encode功能，需要注意</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

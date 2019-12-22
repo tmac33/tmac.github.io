@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="对于一般队列到达尾部又向前存储的队列称为循环队列，为了避免假溢出，我们通常采用循环队列。
+循环队列无论入队还是出队，队尾，队头加1后都要取模运算，例如入队后队尾后移一位：Q.rear =(Q.rear&#43;1)%Maxsize。
+为什么要%MaxSize呢？ 主要是为了处理临界状态，即Q.rear向后移动一个位置Q.rear&#43;1后，很有可能超出了数组的下标，这时它的下一个位置其实是0，如果将一维数组画成环形图，如图所示：
+上图中最大空间Maxsize，当Q.rear=Maxsize-1时，(Q.rear&#43;1)%Maxsize=0，而且Q.front=0，正好满足队满的条件：(Q.rear&#43;1) %Maxsize= Q.front，此时为队满。因此无论是front还是rear向后移动一个位置时，都要加1与最大空间Maxsize取模运算，处理临界问题。
+总结 队空：Q.front=Q.rear; // Q.rear和Q.front指向同一个位置
+队满： (Q.rear&#43;1) %Maxsize=Q.front; // Q.rear向后移一位正好是Q.front
+入队： Q.base[Q.rear]=x; //将元素放入Q.rear所指空间， Q.rear =( Q.rear&#43;1) %Maxsize; // Q.rear向后移一位
+出队： e= Q.base[Q.front]; //用变量记录Q.front所指元素， Q.front=(Q.front&#43;1) %Maxsize // Q. front向后移一位
+循环队列中到底存了多少个元素呢？ 因为队列是循环的，所以存在两种情况：
+（1）Q.rear&amp;gt;= Q.front，如下图所示：
+这种情况队列中元素个数为：Q.rear-Q.front=4-1=3。
+（2）Q.rear&amp;lt; Q.front，如下图所示：
+此时，Q.rear=4，Q.front=Maxsize-2，Q.rear-Q.front=6-Maxsize。但是我们可以看到循环队列中的元素实际上为6个，那怎么办呢？当两者之差为负数时，可以将差值&#43;Maxsize计算元素个数，即：Q.rear-Q.front&#43;Maxsize=6-Maxsize&#43;Maxsize =6，元素个数为6。
+那么在计算元素个数时，可以分两种情况判断： Q.rear&amp;gt;= Q.front：元素个数为Q.rear-Q.front； Q.rear&amp;lt;Q.front：元素个数为Q.rear-Q.front&#43; Maxsize；
+也可以采用取模的方法把两种情况统一为一个语句：
+队列中元素个数：(Q.rear-Q.front&#43;Maxsize)% Maxsize
+当Q.rear-Q.front为负数时，加上Maxsize再取余正好是元素个数，如(-2&#43;6)%6=4；当Q.rear-Q.front为正数时，加上Maxsize超过了最大空间数，取余后正好是元素个数，如(3&#43;6)%6=3。" />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/queuearry/" />
+
+
+<title>
+    
+    循环队列 :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="循环队列">
+<meta itemprop="description" content="对于一般队列到达尾部又向前存储的队列称为循环队列，为了避免假溢出，我们通常采用循环队列。
+循环队列无论入队还是出队，队尾，队头加1后都要取模运算，例如入队后队尾后移一位：Q.rear =(Q.rear&#43;1)%Maxsize。
+为什么要%MaxSize呢？ 主要是为了处理临界状态，即Q.rear向后移动一个位置Q.rear&#43;1后，很有可能超出了数组的下标，这时它的下一个位置其实是0，如果将一维数组画成环形图，如图所示：
+上图中最大空间Maxsize，当Q.rear=Maxsize-1时，(Q.rear&#43;1)%Maxsize=0，而且Q.front=0，正好满足队满的条件：(Q.rear&#43;1) %Maxsize= Q.front，此时为队满。因此无论是front还是rear向后移动一个位置时，都要加1与最大空间Maxsize取模运算，处理临界问题。
+总结 队空：Q.front=Q.rear; // Q.rear和Q.front指向同一个位置
+队满： (Q.rear&#43;1) %Maxsize=Q.front; // Q.rear向后移一位正好是Q.front
+入队： Q.base[Q.rear]=x; //将元素放入Q.rear所指空间， Q.rear =( Q.rear&#43;1) %Maxsize; // Q.rear向后移一位
+出队： e= Q.base[Q.front]; //用变量记录Q.front所指元素， Q.front=(Q.front&#43;1) %Maxsize // Q. front向后移一位
+循环队列中到底存了多少个元素呢？ 因为队列是循环的，所以存在两种情况：
+（1）Q.rear&gt;= Q.front，如下图所示：
+这种情况队列中元素个数为：Q.rear-Q.front=4-1=3。
+（2）Q.rear&lt; Q.front，如下图所示：
+此时，Q.rear=4，Q.front=Maxsize-2，Q.rear-Q.front=6-Maxsize。但是我们可以看到循环队列中的元素实际上为6个，那怎么办呢？当两者之差为负数时，可以将差值&#43;Maxsize计算元素个数，即：Q.rear-Q.front&#43;Maxsize=6-Maxsize&#43;Maxsize =6，元素个数为6。
+那么在计算元素个数时，可以分两种情况判断： Q.rear&gt;= Q.front：元素个数为Q.rear-Q.front； Q.rear&lt;Q.front：元素个数为Q.rear-Q.front&#43; Maxsize；
+也可以采用取模的方法把两种情况统一为一个语句：
+队列中元素个数：(Q.rear-Q.front&#43;Maxsize)% Maxsize
+当Q.rear-Q.front为负数时，加上Maxsize再取余正好是元素个数，如(-2&#43;6)%6=4；当Q.rear-Q.front为正数时，加上Maxsize超过了最大空间数，取余后正好是元素个数，如(3&#43;6)%6=3。">
+
+
+<meta itemprop="datePublished" content="2015-06-03T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-06-03T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="53">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="循环队列"/>
+<meta name="twitter:description" content="对于一般队列到达尾部又向前存储的队列称为循环队列，为了避免假溢出，我们通常采用循环队列。
+循环队列无论入队还是出队，队尾，队头加1后都要取模运算，例如入队后队尾后移一位：Q.rear =(Q.rear&#43;1)%Maxsize。
+为什么要%MaxSize呢？ 主要是为了处理临界状态，即Q.rear向后移动一个位置Q.rear&#43;1后，很有可能超出了数组的下标，这时它的下一个位置其实是0，如果将一维数组画成环形图，如图所示：
+上图中最大空间Maxsize，当Q.rear=Maxsize-1时，(Q.rear&#43;1)%Maxsize=0，而且Q.front=0，正好满足队满的条件：(Q.rear&#43;1) %Maxsize= Q.front，此时为队满。因此无论是front还是rear向后移动一个位置时，都要加1与最大空间Maxsize取模运算，处理临界问题。
+总结 队空：Q.front=Q.rear; // Q.rear和Q.front指向同一个位置
+队满： (Q.rear&#43;1) %Maxsize=Q.front; // Q.rear向后移一位正好是Q.front
+入队： Q.base[Q.rear]=x; //将元素放入Q.rear所指空间， Q.rear =( Q.rear&#43;1) %Maxsize; // Q.rear向后移一位
+出队： e= Q.base[Q.front]; //用变量记录Q.front所指元素， Q.front=(Q.front&#43;1) %Maxsize // Q. front向后移一位
+循环队列中到底存了多少个元素呢？ 因为队列是循环的，所以存在两种情况：
+（1）Q.rear&gt;= Q.front，如下图所示：
+这种情况队列中元素个数为：Q.rear-Q.front=4-1=3。
+（2）Q.rear&lt; Q.front，如下图所示：
+此时，Q.rear=4，Q.front=Maxsize-2，Q.rear-Q.front=6-Maxsize。但是我们可以看到循环队列中的元素实际上为6个，那怎么办呢？当两者之差为负数时，可以将差值&#43;Maxsize计算元素个数，即：Q.rear-Q.front&#43;Maxsize=6-Maxsize&#43;Maxsize =6，元素个数为6。
+那么在计算元素个数时，可以分两种情况判断： Q.rear&gt;= Q.front：元素个数为Q.rear-Q.front； Q.rear&lt;Q.front：元素个数为Q.rear-Q.front&#43; Maxsize；
+也可以采用取模的方法把两种情况统一为一个语句：
+队列中元素个数：(Q.rear-Q.front&#43;Maxsize)% Maxsize
+当Q.rear-Q.front为负数时，加上Maxsize再取余正好是元素个数，如(-2&#43;6)%6=4；当Q.rear-Q.front为正数时，加上Maxsize超过了最大空间数，取余后正好是元素个数，如(3&#43;6)%6=3。"/>
+
+
+
+
+<meta property="article:published_time" content="2015-06-03 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/queuearry/">循环队列</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<p>对于一般队列到达尾部又向前存储的队列称为循环队列，为了避免假溢出，我们通常采用循环队列。</p>
+
+<p>循环队列无论入队还是出队，队尾，队头加1后都要取模运算，例如入队后队尾后移一位：Q.rear =(Q.rear+1)%Maxsize。</p>
+
+<h2 id="为什么要-maxsize呢">为什么要%MaxSize呢？</h2>
+
+<p>主要是为了处理临界状态，即Q.rear向后移动一个位置Q.rear+1后，很有可能超出了数组的下标，这时它的下一个位置其实是0，如果将一维数组画成环形图，如图所示：</p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/8219030-da243784061fb210.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/698/format/webp" alt="环形图" /></p>
+
+<p>上图中最大空间Maxsize，当Q.rear=Maxsize-1时，(Q.rear+1)%Maxsize=0，而且Q.front=0，正好满足队满的条件：(Q.rear+1) %Maxsize= Q.front，此时为队满。因此无论是front还是rear向后移动一个位置时，都要加1与最大空间Maxsize取模运算，处理临界问题。</p>
+
+<h1 id="总结">总结</h1>
+
+<p>队空：Q.front=Q.rear; // Q.rear和Q.front指向同一个位置</p>
+
+<p>队满： (Q.rear+1) %Maxsize=Q.front; // Q.rear向后移一位正好是Q.front</p>
+
+<p>入队：
+Q.base[Q.rear]=x; //将元素放入Q.rear所指空间，
+Q.rear =( Q.rear+1) %Maxsize; // Q.rear向后移一位</p>
+
+<p>出队：
+e= Q.base[Q.front]; //用变量记录Q.front所指元素，
+Q.front=(Q.front+1) %Maxsize // Q. front向后移一位</p>
+
+<h2 id="循环队列中到底存了多少个元素呢">循环队列中到底存了多少个元素呢？</h2>
+
+<p>因为队列是循环的，所以存在两种情况：</p>
+
+<p>（1）Q.rear&gt;= Q.front，如下图所示：</p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/8219030-a5149262253111e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/355/format/webp" alt="尾大于头" /></p>
+
+<p>这种情况队列中元素个数为：Q.rear-Q.front=4-1=3。</p>
+
+<p>（2）Q.rear&lt; Q.front，如下图所示：</p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/8219030-54fb052302455213.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/362/format/webp" alt="头大于尾" /></p>
+
+<p>此时，Q.rear=4，Q.front=Maxsize-2，Q.rear-Q.front=6-Maxsize。但是我们可以看到循环队列中的元素实际上为6个，那怎么办呢？当两者之差为负数时，可以将差值+Maxsize计算元素个数，即：Q.rear-Q.front+Maxsize=6-Maxsize+Maxsize =6，元素个数为6。</p>
+
+<p>那么在计算元素个数时，可以分两种情况判断：
+Q.rear&gt;= Q.front：元素个数为Q.rear-Q.front；
+Q.rear&lt;Q.front：元素个数为Q.rear-Q.front+ Maxsize；</p>
+
+<p>也可以采用取模的方法把两种情况统一为一个语句：</p>
+
+<p>队列中元素个数：(Q.rear-Q.front+Maxsize)% Maxsize</p>
+
+<p>当Q.rear-Q.front为负数时，加上Maxsize再取余正好是元素个数，如(-2+6)%6=4；当Q.rear-Q.front为正数时，加上Maxsize超过了最大空间数，取余后正好是元素个数，如(3+6)%6=3。</p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/8219030-899fa7a068679c87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/438/format/webp" alt="公式说明" /></p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

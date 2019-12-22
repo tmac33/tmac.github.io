@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="什么是 深度/广度 优先遍历？ 深度优先遍历简称DFS（Depth First Search），广度优先遍历简称BFS（Breadth First Search），它们是遍历图当中所有顶点的两种方式。 这两种遍历方式有什么不同呢？我们来举个栗子： 我们来到一个游乐场，游乐场里有11个景点。我们从景点0开始，要玩遍游乐场的所有景点，可以有什么样的游玩次序呢？
+第一种是一头扎到底的玩法。我们选择一条支路，尽可能不断地深入，如果遇到死路就往回退，回退过程中如果遇到没探索过的支路，就进入该支路继续深入。 在图中，我们首先选择景点1的这条路，继续深入到景点7、景点8，终于发现走不动了（景点旁边的数字代表探索次序）：
+于是，我们退回到景点7，然后探索景点10，又走到了死胡同。于是，退回到景点1，探索景点9：
+按照这个思路，我们再退回到景点0，后续依次探索景点2、3、5、4、6，终于玩遍了整个游乐场：
+像这样先深入探索，走到头再回退寻找其他出路的遍历方式，就叫做深度优先遍历（DFS）。
+除了像深度优先遍历这样一头扎到底的玩法以外，我们还有另一种玩法：首先把起点相邻的几个景点玩遍，然后去玩距离起点稍远一些（隔一层）的景点，然后再去玩距离起点更远一些（隔两层）的景点&amp;hellip;&amp;hellip; 在图中，我们首先探索景点0的相邻景点1、2、3、4：
+接着，我们探索与景点0相隔一层的景点7、9、5、6：
+最后，我们探索与景点0相隔两层的景点8、10：
+像这样一层一层由内而外的遍历方式，就叫做广度优先遍历（BFS）。
+深度/广度优先遍历 的实现 深度优先遍历 首先说说深度优先遍历的实现过程。这里所说的回溯是什么意思呢？回溯顾名思义，就是自后向前，追溯曾经走过的路径。
+我们把刚才游乐场的例子抽象成数据结构的图，假如我们依次访问了顶点0、1、7、8，发现无路可走了，这时候我们要从顶点8退回到顶点7。
+而后我们探索了顶点10，又无路可走了，这时候我们要从顶点10退回到顶点7，再退回到顶点1。
+像这样的自后向前追溯曾经访问过的路径，就叫做回溯。 要想实现回溯，可以利用栈的先入后出特性，也可以采用递归的方式（因为递归本身就是基于方法调用栈来实现）。
+下面我们来演示一下具体实现过程。
+首先访问顶点0、1、7、8，这四个顶点依次入栈，此时顶点8是栈顶：
+从顶点8退回到顶点7，顶点8出栈：
+接下来访问顶点10，顶点10入栈：
+从顶点10退到顶点7，从顶点7退到顶点1，顶点10和顶点7出栈：
+探索顶点9，顶点9入栈：
+以此类推，利用这样一个临时栈来实现回溯，最终遍历完所有顶点。
+广度优先遍历 接下来该说说广度优先遍历的实现过程了。刚才所说的重放是什么意思呢？似乎听起来和回溯差不多？其实，回溯与重放是完全相反的过程。
+仍然以刚才的图为例，按照广度优先遍历的思想，我们首先遍历顶点0，然后遍历了邻近顶点1、2、3、4：
+接下来我们要遍历更外围的顶点，可是如何找到这些更外围的顶点呢？我们需要把刚才遍历过的顶点1、2、3、4按顺序重新回顾一遍，从顶点1发现邻近的顶点7、9；从顶点3发现邻近的顶点5、6。
+像这样把遍历过的顶点按照之前的遍历顺序重新回顾，就叫做重放。同样的，要实现重放也需要额外的存储空间，可以利用队列的先入先出特性来实现。
+下面我们来演示一下具体实现过程。
+首先遍历起点顶点0，顶点0入队：
+接下来顶点0出队，遍历顶点0的邻近顶点1、2、3、4，并且把它们入队：
+然后顶点1出队，遍历顶点1的邻近顶点7、9，并且把它们入队：
+然后顶点2出队，没有新的顶点可入队：
+以此类推，利用这样一个队列来实现重放，最终遍历完所有顶点。
+代码实现Golang 树的定义 package tree type Node struct { Val int Left *Node Right *Node }  深度优先遍历 深度优先遍历需要优先使用栈
+栈的定义 type Stack struct { list *list." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/dfsbfs/" />
+
+
+<title>
+    
+    深度优先与广度优先 :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="深度优先与广度优先">
+<meta itemprop="description" content="什么是 深度/广度 优先遍历？ 深度优先遍历简称DFS（Depth First Search），广度优先遍历简称BFS（Breadth First Search），它们是遍历图当中所有顶点的两种方式。 这两种遍历方式有什么不同呢？我们来举个栗子： 我们来到一个游乐场，游乐场里有11个景点。我们从景点0开始，要玩遍游乐场的所有景点，可以有什么样的游玩次序呢？
+第一种是一头扎到底的玩法。我们选择一条支路，尽可能不断地深入，如果遇到死路就往回退，回退过程中如果遇到没探索过的支路，就进入该支路继续深入。 在图中，我们首先选择景点1的这条路，继续深入到景点7、景点8，终于发现走不动了（景点旁边的数字代表探索次序）：
+于是，我们退回到景点7，然后探索景点10，又走到了死胡同。于是，退回到景点1，探索景点9：
+按照这个思路，我们再退回到景点0，后续依次探索景点2、3、5、4、6，终于玩遍了整个游乐场：
+像这样先深入探索，走到头再回退寻找其他出路的遍历方式，就叫做深度优先遍历（DFS）。
+除了像深度优先遍历这样一头扎到底的玩法以外，我们还有另一种玩法：首先把起点相邻的几个景点玩遍，然后去玩距离起点稍远一些（隔一层）的景点，然后再去玩距离起点更远一些（隔两层）的景点&hellip;&hellip; 在图中，我们首先探索景点0的相邻景点1、2、3、4：
+接着，我们探索与景点0相隔一层的景点7、9、5、6：
+最后，我们探索与景点0相隔两层的景点8、10：
+像这样一层一层由内而外的遍历方式，就叫做广度优先遍历（BFS）。
+深度/广度优先遍历 的实现 深度优先遍历 首先说说深度优先遍历的实现过程。这里所说的回溯是什么意思呢？回溯顾名思义，就是自后向前，追溯曾经走过的路径。
+我们把刚才游乐场的例子抽象成数据结构的图，假如我们依次访问了顶点0、1、7、8，发现无路可走了，这时候我们要从顶点8退回到顶点7。
+而后我们探索了顶点10，又无路可走了，这时候我们要从顶点10退回到顶点7，再退回到顶点1。
+像这样的自后向前追溯曾经访问过的路径，就叫做回溯。 要想实现回溯，可以利用栈的先入后出特性，也可以采用递归的方式（因为递归本身就是基于方法调用栈来实现）。
+下面我们来演示一下具体实现过程。
+首先访问顶点0、1、7、8，这四个顶点依次入栈，此时顶点8是栈顶：
+从顶点8退回到顶点7，顶点8出栈：
+接下来访问顶点10，顶点10入栈：
+从顶点10退到顶点7，从顶点7退到顶点1，顶点10和顶点7出栈：
+探索顶点9，顶点9入栈：
+以此类推，利用这样一个临时栈来实现回溯，最终遍历完所有顶点。
+广度优先遍历 接下来该说说广度优先遍历的实现过程了。刚才所说的重放是什么意思呢？似乎听起来和回溯差不多？其实，回溯与重放是完全相反的过程。
+仍然以刚才的图为例，按照广度优先遍历的思想，我们首先遍历顶点0，然后遍历了邻近顶点1、2、3、4：
+接下来我们要遍历更外围的顶点，可是如何找到这些更外围的顶点呢？我们需要把刚才遍历过的顶点1、2、3、4按顺序重新回顾一遍，从顶点1发现邻近的顶点7、9；从顶点3发现邻近的顶点5、6。
+像这样把遍历过的顶点按照之前的遍历顺序重新回顾，就叫做重放。同样的，要实现重放也需要额外的存储空间，可以利用队列的先入先出特性来实现。
+下面我们来演示一下具体实现过程。
+首先遍历起点顶点0，顶点0入队：
+接下来顶点0出队，遍历顶点0的邻近顶点1、2、3、4，并且把它们入队：
+然后顶点1出队，遍历顶点1的邻近顶点7、9，并且把它们入队：
+然后顶点2出队，没有新的顶点可入队：
+以此类推，利用这样一个队列来实现重放，最终遍历完所有顶点。
+代码实现Golang 树的定义 package tree type Node struct { Val int Left *Node Right *Node }  深度优先遍历 深度优先遍历需要优先使用栈
+栈的定义 type Stack struct { list *list.">
+
+
+<meta itemprop="datePublished" content="2019-07-13T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-07-13T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="437">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="深度优先与广度优先"/>
+<meta name="twitter:description" content="什么是 深度/广度 优先遍历？ 深度优先遍历简称DFS（Depth First Search），广度优先遍历简称BFS（Breadth First Search），它们是遍历图当中所有顶点的两种方式。 这两种遍历方式有什么不同呢？我们来举个栗子： 我们来到一个游乐场，游乐场里有11个景点。我们从景点0开始，要玩遍游乐场的所有景点，可以有什么样的游玩次序呢？
+第一种是一头扎到底的玩法。我们选择一条支路，尽可能不断地深入，如果遇到死路就往回退，回退过程中如果遇到没探索过的支路，就进入该支路继续深入。 在图中，我们首先选择景点1的这条路，继续深入到景点7、景点8，终于发现走不动了（景点旁边的数字代表探索次序）：
+于是，我们退回到景点7，然后探索景点10，又走到了死胡同。于是，退回到景点1，探索景点9：
+按照这个思路，我们再退回到景点0，后续依次探索景点2、3、5、4、6，终于玩遍了整个游乐场：
+像这样先深入探索，走到头再回退寻找其他出路的遍历方式，就叫做深度优先遍历（DFS）。
+除了像深度优先遍历这样一头扎到底的玩法以外，我们还有另一种玩法：首先把起点相邻的几个景点玩遍，然后去玩距离起点稍远一些（隔一层）的景点，然后再去玩距离起点更远一些（隔两层）的景点&hellip;&hellip; 在图中，我们首先探索景点0的相邻景点1、2、3、4：
+接着，我们探索与景点0相隔一层的景点7、9、5、6：
+最后，我们探索与景点0相隔两层的景点8、10：
+像这样一层一层由内而外的遍历方式，就叫做广度优先遍历（BFS）。
+深度/广度优先遍历 的实现 深度优先遍历 首先说说深度优先遍历的实现过程。这里所说的回溯是什么意思呢？回溯顾名思义，就是自后向前，追溯曾经走过的路径。
+我们把刚才游乐场的例子抽象成数据结构的图，假如我们依次访问了顶点0、1、7、8，发现无路可走了，这时候我们要从顶点8退回到顶点7。
+而后我们探索了顶点10，又无路可走了，这时候我们要从顶点10退回到顶点7，再退回到顶点1。
+像这样的自后向前追溯曾经访问过的路径，就叫做回溯。 要想实现回溯，可以利用栈的先入后出特性，也可以采用递归的方式（因为递归本身就是基于方法调用栈来实现）。
+下面我们来演示一下具体实现过程。
+首先访问顶点0、1、7、8，这四个顶点依次入栈，此时顶点8是栈顶：
+从顶点8退回到顶点7，顶点8出栈：
+接下来访问顶点10，顶点10入栈：
+从顶点10退到顶点7，从顶点7退到顶点1，顶点10和顶点7出栈：
+探索顶点9，顶点9入栈：
+以此类推，利用这样一个临时栈来实现回溯，最终遍历完所有顶点。
+广度优先遍历 接下来该说说广度优先遍历的实现过程了。刚才所说的重放是什么意思呢？似乎听起来和回溯差不多？其实，回溯与重放是完全相反的过程。
+仍然以刚才的图为例，按照广度优先遍历的思想，我们首先遍历顶点0，然后遍历了邻近顶点1、2、3、4：
+接下来我们要遍历更外围的顶点，可是如何找到这些更外围的顶点呢？我们需要把刚才遍历过的顶点1、2、3、4按顺序重新回顾一遍，从顶点1发现邻近的顶点7、9；从顶点3发现邻近的顶点5、6。
+像这样把遍历过的顶点按照之前的遍历顺序重新回顾，就叫做重放。同样的，要实现重放也需要额外的存储空间，可以利用队列的先入先出特性来实现。
+下面我们来演示一下具体实现过程。
+首先遍历起点顶点0，顶点0入队：
+接下来顶点0出队，遍历顶点0的邻近顶点1、2、3、4，并且把它们入队：
+然后顶点1出队，遍历顶点1的邻近顶点7、9，并且把它们入队：
+然后顶点2出队，没有新的顶点可入队：
+以此类推，利用这样一个队列来实现重放，最终遍历完所有顶点。
+代码实现Golang 树的定义 package tree type Node struct { Val int Left *Node Right *Node }  深度优先遍历 深度优先遍历需要优先使用栈
+栈的定义 type Stack struct { list *list."/>
+
+
+
+
+<meta property="article:published_time" content="2019-07-13 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/dfsbfs/">深度优先与广度优先</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<h1 id="什么是-深度-广度-优先遍历">什么是 深度/广度 优先遍历？</h1>
+
+<p>深度优先遍历简称DFS（Depth First Search），广度优先遍历简称BFS（Breadth First Search），它们是遍历图当中所有顶点的两种方式。
+这两种遍历方式有什么不同呢？我们来举个栗子：
+我们来到一个游乐场，游乐场里有11个景点。我们从景点0开始，要玩遍游乐场的所有景点，可以有什么样的游玩次序呢？</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baab64ceed7af?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>第一种是一头扎到底的玩法。我们选择一条支路，尽可能不断地深入，如果遇到死路就往回退，回退过程中如果遇到没探索过的支路，就进入该支路继续深入。
+在图中，我们首先选择景点1的这条路，继续深入到景点7、景点8，终于发现走不动了（景点旁边的数字代表探索次序）：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baabc5598e789?imageslim" alt="" /></p>
+
+<p>于是，我们退回到景点7，然后探索景点10，又走到了死胡同。于是，退回到景点1，探索景点9：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baac23401bf85?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>按照这个思路，我们再退回到景点0，后续依次探索景点2、3、5、4、6，终于玩遍了整个游乐场：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baac76dcdf283?imageslim" alt="" /></p>
+
+<p>像这样先深入探索，走到头再回退寻找其他出路的遍历方式，就叫做<strong>深度优先遍历（DFS）</strong>。</p>
+
+<p>除了像深度优先遍历这样一头扎到底的玩法以外，我们还有另一种玩法：首先把起点相邻的几个景点玩遍，然后去玩距离起点稍远一些（隔一层）的景点，然后再去玩距离起点更远一些（隔两层）的景点&hellip;&hellip;
+在图中，我们首先探索景点0的相邻景点1、2、3、4：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baada4a15925b?imageslim" alt="" /></p>
+
+<p>接着，我们探索与景点0相隔一层的景点7、9、5、6：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baae0be1dc0f4?imageslim" alt="" /></p>
+
+<p>最后，我们探索与景点0相隔两层的景点8、10：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169baae7813d998c?imageslim" alt="" /></p>
+
+<p>像这样一层一层由内而外的遍历方式，就叫做<strong>广度优先遍历（BFS）</strong>。</p>
+
+<h1 id="深度-广度优先遍历-的实现">深度/广度优先遍历 的实现</h1>
+
+<h2 id="深度优先遍历">深度优先遍历</h2>
+
+<p>首先说说深度优先遍历的实现过程。这里所说的回溯是什么意思呢？回溯顾名思义，就是自后向前，追溯曾经走过的路径。</p>
+
+<p>我们把刚才游乐场的例子抽象成数据结构的图，假如我们依次访问了顶点0、1、7、8，发现无路可走了，这时候我们要从顶点8退回到顶点7。</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab13504afc19?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>而后我们探索了顶点10，又无路可走了，这时候我们要从顶点10退回到顶点7，再退回到顶点1。</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab199fa6e697?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>像这样的自后向前追溯曾经访问过的路径，就叫做<strong>回溯</strong>。
+要想实现回溯，可以利用栈的先入后出特性，也可以采用递归的方式（因为递归本身就是基于方法调用栈来实现）。</p>
+
+<p>下面我们来演示一下具体实现过程。</p>
+
+<p>首先访问顶点0、1、7、8，这四个顶点依次入栈，此时顶点8是栈顶：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab214c53cb79?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>从顶点8退回到顶点7，顶点8出栈：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab254190ba91?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>接下来访问顶点10，顶点10入栈：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab3058a2ec73?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>从顶点10退到顶点7，从顶点7退到顶点1，顶点10和顶点7出栈：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab39791d9ebf?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>探索顶点9，顶点9入栈：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab4039fdc33f?imageslim" alt="" /></p>
+
+<p>以此类推，利用这样一个临时栈来实现回溯，最终遍历完所有顶点。</p>
+
+<h2 id="广度优先遍历">广度优先遍历</h2>
+
+<p>接下来该说说广度优先遍历的实现过程了。刚才所说的重放是什么意思呢？似乎听起来和回溯差不多？其实，回溯与重放是完全相反的过程。</p>
+
+<p>仍然以刚才的图为例，按照广度优先遍历的思想，我们首先遍历顶点0，然后遍历了邻近顶点1、2、3、4：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab4cf1b847f0?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>接下来我们要遍历更外围的顶点，可是如何找到这些更外围的顶点呢？我们需要把刚才遍历过的顶点1、2、3、4按顺序重新回顾一遍，从顶点1发现邻近的顶点7、9；从顶点3发现邻近的顶点5、6。</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab54bfd9fd77?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>像这样把遍历过的顶点按照之前的遍历顺序重新回顾，就叫做重放。同样的，要实现重放也需要额外的存储空间，可以利用队列的先入先出特性来实现。</p>
+
+<p>下面我们来演示一下具体实现过程。</p>
+
+<p>首先遍历起点顶点0，顶点0入队：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab62b0286c4e?imageslim" alt="" /></p>
+
+<p>接下来顶点0出队，遍历顶点0的邻近顶点1、2、3、4，并且把它们入队：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab67d8c6fffc?imageslim" alt="" /></p>
+
+<p>然后顶点1出队，遍历顶点1的邻近顶点7、9，并且把它们入队：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab7062d92274?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>然后顶点2出队，没有新的顶点可入队：</p>
+
+<p><img src="https://user-gold-cdn.xitu.io/2019/3/26/169bab80d340d038?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="" /></p>
+
+<p>以此类推，利用这样一个队列来实现重放，最终遍历完所有顶点。</p>
+
+<h1 id="代码实现golang">代码实现Golang</h1>
+
+<h2 id="树的定义">树的定义</h2>
+
+<pre><code class="language-go">package tree
+
+type Node struct {
+    Val int
+    Left *Node
+    Right *Node
+}
+</code></pre>
+
+<h2 id="深度优先遍历-1">深度优先遍历</h2>
+
+<p>深度优先遍历需要优先使用栈</p>
+
+<h3 id="栈的定义">栈的定义</h3>
+
+<pre><code class="language-go">type Stack struct {
+    list *list.List
+} 
+
+func NewStack() *Stack {
+    list := list.New()
+    return &amp;Stack{list}
+}
+
+func (stack *Stack) Push(value interface{}) {
+    stack.list.PushBack(value)
+}
+
+func (stack *Stack) Pop() interface{} {
+    if e := stack.list.Back(); e!= nil {
+        stack.list.Remove(e)
+        return e.Value
+    }
+    
+    return nil
+}
+
+func (stack *Stack) Len() int {
+    return stack.list.Len()
+}
+
+func (stack *Stack) Empty() bool {
+    return stack.Len() == 0
+}
+</code></pre>
+
+<h3 id="前序遍历">前序遍历</h3>
+
+<p>为Stack结构体添加前序遍历的方法，前序遍历的思路是通过栈，将右子树先行压栈，然后左子树压栈</p>
+
+<pre><code class="language-go">func (root *Node) PreTravesal() {
+    if root == nil {
+        return
+    }
+    
+    s := stack.NewStack()
+    s.push(root)
+    
+    for !s.Empty() {
+        cur := s.Pop().(*Node)
+        fmt.Println(cur.Val)
+        
+        if cur.Right != nil {
+            s.Push(cur.Right)
+        }
+        if cur.Left != nil {
+            s.Push(cur.Left)
+        }
+    }
+}
+</code></pre>
+
+<h3 id="中序遍历">中序遍历</h3>
+
+<pre><code class="language-go">func (root *Node) InTravesal() {
+    if root == nil {
+        return
+    }
+    
+    s := stack.NewStack()
+    cur := root
+    for {
+        for cur != nil {
+            s.Push(cur)
+            cur = cur.Left
+        }
+        
+        if s.Empty() {
+            break
+        }
+        
+        cur = s.Pop().(*Node)
+        fmt.Println(cur.Val)
+        cur = cur.right
+    }
+}
+</code></pre>
+
+<h3 id="后序遍历">后序遍历</h3>
+
+<pre><code class="language-go">func (root *Node) PostTravesal() {
+    if root == nil {
+        return
+    }
+    
+    s := stack.NewStack()
+    out := stack.NewStack()
+    s.Push(root)
+    
+    for !s.Empty() {
+        cur := s.Pop().(*Node)
+        out.Push(cur)
+        
+        if cur.Left != nil {
+            s.Push(cur.Left)
+        }
+        
+        if cur.Right != nil {
+            s.Push(cur.Right)
+        }
+    }
+    
+    for !out.Empty() {
+        cur := out.Pop().(*Node)
+        fmt.Println(cur.Val)
+    }
+}
+</code></pre>
+
+<h2 id="广度优先遍历-1">广度优先遍历</h2>
+
+<p>广度优先遍历需要使用到队列</p>
+
+<h3 id="实现队列">实现队列</h3>
+
+<p>使用切片实现队列</p>
+
+<pre><code class="language-go">package queue
+
+import (
+    &quot;fmt&quot;
+)
+
+type Queue interface {
+    Offer(e interface{})
+    Poll() interface{}
+    Clear() bool
+    Size() int
+    IsEmpty() bool
+}
+
+type LinkedList struct {
+    elements []interface{}
+}
+
+func New() *LinkedList {
+    return &amp;LinkedList{}
+}
+
+
+func (queue *LinkedList) Offer(e interface{}) {
+    queue.elements = append(queue.elements, e)
+}
+
+func (queue *LinkedList) Poll() interface{} {
+    if queue.IsEmpty() {
+        fmt.Println(&quot;Poll error : queue is Empty&quot;)
+        return nil
+    }
+
+    firstElement := queue.elements[0]
+    queue.elements = queue.elements[1:]
+    return firstElement
+}
+
+func (queue *LinkedList) Size() int {
+    return len(queue.elements)
+}
+
+func (queue *LinkedList) IsEmpty() bool {
+    return len(queue.elements) == 0
+}
+
+func (queue *LinkedList) Clear() bool  {
+    if queue.IsEmpty() {
+        fmt.Println(&quot;queue is Empty!&quot;)
+        return false
+    }
+    for i := 0; i &lt; queue.Size(); i++ {
+        queue.elements[i] = nil
+    }
+    queue.elements = nil
+    return true
+}
+
+
+</code></pre>
+
+<h3 id="层序遍历">层序遍历</h3>
+
+<pre><code class="language-go">func (root *Node) LevelTravesal() {
+    if root == nil {
+        return
+    }
+
+    linkedList := queue.New()
+    linkedList.Offer(root)
+
+    for !linkedList.IsEmpty()  {
+        cur := linkedList.Poll().(*Node)
+        fmt.Println(cur.Val)
+
+        if cur.Left != nil {
+            linkedList.Offer(cur.Left)
+        }
+
+        if cur.Right != nil {
+            linkedList.Offer(cur.Right)
+        }
+    }
+}
+</code></pre>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author"
+    content="">
+<meta name="description"
+    content="一般来说有四种常见的读取文件操作方法：
+ 使用File自带的Read方法 使用bufio库的Read方法 使用io/ioutil库的ReadAll() 使用io/ioutil库的ReadFile()  先说结论：
+当每次读取块的大小小于4kb，建议使用bufio.NewReader(f),大于4kb用bufio.NewReaderSize(f,缓存大小)
+要读Reader，图方便使用ioutil.ReadAll()
+一次性读取文件，使用ioutil.ReadFile()
+不建议使用普通的Read
+关于性能的深入探究，我会在下篇博文详细探讨
+总而言之，要性能使用bufio，方便就用ioutil
+下面为各种方法示例
+package main import ( &amp;quot;bufio&amp;quot; &amp;quot;fmt&amp;quot; &amp;quot;io&amp;quot; &amp;quot;io/ioutil&amp;quot; &amp;quot;os&amp;quot; ) type ValNode struct { row int col int val int } func main() { //1.创建一个原始数组 var chessMap [11][11]int chessMap[1][2] = 1 //黑子 chessMap[2][3] = 2 //篮子 //输出看看原始数组 for _, v := range chessMap { for _, v2 := range v { fmt.Printf(&amp;quot;%d\t&amp;quot;, v2) } } } //OS包 func read1(path string) { fi, err := os." />
+<meta name="keywords" content="Golang&amp;.Net Core" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/blog/fileoperator/" />
+
+
+<title>
+    
+    文件操作_Golang :: Code and Things  — Cosmo Wu
+    
+</title>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.1/css/flag-icon.min.css" rel="stylesheet"
+    type="text/css">
+
+
+
+<link rel="stylesheet" href="/main.min.91687bbfc139d7ff1a244bb6d7324425f9c4f424eaaad242b478e3b3cf56396a.css">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#252627">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="theme-color" content="#252627">
+<meta itemprop="name" content="文件操作_Golang">
+<meta itemprop="description" content="一般来说有四种常见的读取文件操作方法：
+ 使用File自带的Read方法 使用bufio库的Read方法 使用io/ioutil库的ReadAll() 使用io/ioutil库的ReadFile()  先说结论：
+当每次读取块的大小小于4kb，建议使用bufio.NewReader(f),大于4kb用bufio.NewReaderSize(f,缓存大小)
+要读Reader，图方便使用ioutil.ReadAll()
+一次性读取文件，使用ioutil.ReadFile()
+不建议使用普通的Read
+关于性能的深入探究，我会在下篇博文详细探讨
+总而言之，要性能使用bufio，方便就用ioutil
+下面为各种方法示例
+package main import ( &quot;bufio&quot; &quot;fmt&quot; &quot;io&quot; &quot;io/ioutil&quot; &quot;os&quot; ) type ValNode struct { row int col int val int } func main() { //1.创建一个原始数组 var chessMap [11][11]int chessMap[1][2] = 1 //黑子 chessMap[2][3] = 2 //篮子 //输出看看原始数组 for _, v := range chessMap { for _, v2 := range v { fmt.Printf(&quot;%d\t&quot;, v2) } } } //OS包 func read1(path string) { fi, err := os.">
+
+
+<meta itemprop="datePublished" content="2019-06-06T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-06-06T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="530">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/"/>
+
+<meta name="twitter:title" content="文件操作_Golang"/>
+<meta name="twitter:description" content="一般来说有四种常见的读取文件操作方法：
+ 使用File自带的Read方法 使用bufio库的Read方法 使用io/ioutil库的ReadAll() 使用io/ioutil库的ReadFile()  先说结论：
+当每次读取块的大小小于4kb，建议使用bufio.NewReader(f),大于4kb用bufio.NewReaderSize(f,缓存大小)
+要读Reader，图方便使用ioutil.ReadAll()
+一次性读取文件，使用ioutil.ReadFile()
+不建议使用普通的Read
+关于性能的深入探究，我会在下篇博文详细探讨
+总而言之，要性能使用bufio，方便就用ioutil
+下面为各种方法示例
+package main import ( &quot;bufio&quot; &quot;fmt&quot; &quot;io&quot; &quot;io/ioutil&quot; &quot;os&quot; ) type ValNode struct { row int col int val int } func main() { //1.创建一个原始数组 var chessMap [11][11]int chessMap[1][2] = 1 //黑子 chessMap[2][3] = 2 //篮子 //输出看看原始数组 for _, v := range chessMap { for _, v2 := range v { fmt.Printf(&quot;%d\t&quot;, v2) } } } //OS包 func read1(path string) { fi, err := os."/>
+
+
+
+
+<meta property="article:published_time" content="2019-06-06 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+    </head>
+
+    <body class="dark-theme">
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text">$ cd /home/</span>
+            <span class="logo__cursor"></span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/blog/">Blog</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+
+            <span class="theme-toggle"><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+</span>
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="/blog/fileoperator/">文件操作_Golang</a></h2>
+
+            
+
+            <div class="post-content">
+                
+
+<p>一般来说有四种常见的读取文件操作方法：</p>
+
+<ul>
+<li>使用File自带的Read方法</li>
+<li>使用bufio库的Read方法</li>
+<li>使用io/ioutil库的ReadAll()</li>
+<li>使用io/ioutil库的ReadFile()</li>
+</ul>
+
+<p>先说结论：</p>
+
+<p>当每次读取块的大小小于4kb，建议使用bufio.NewReader(f),大于4kb用bufio.NewReaderSize(f,缓存大小)</p>
+
+<p>要读Reader，图方便使用ioutil.ReadAll()</p>
+
+<p>一次性读取文件，使用ioutil.ReadFile()</p>
+
+<p>不建议使用普通的Read</p>
+
+<p>关于性能的深入探究，我会在下篇博文详细探讨</p>
+
+<p>总而言之，要性能使用bufio，方便就用ioutil</p>
+
+<p>下面为各种方法示例</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;bufio&quot;
+    &quot;fmt&quot;
+    &quot;io&quot;
+    &quot;io/ioutil&quot;
+    &quot;os&quot;
+)
+
+type ValNode struct {
+    row int
+    col int
+    val int
+}
+
+func main() {
+    //1.创建一个原始数组
+    var chessMap [11][11]int
+    chessMap[1][2] = 1 //黑子
+    chessMap[2][3] = 2 //篮子
+
+    //输出看看原始数组
+    for _, v := range chessMap {
+        for _, v2 := range v {
+            fmt.Printf(&quot;%d\t&quot;, v2)
+        }
+    }
+
+}
+
+//OS包
+func read1(path string) {
+    fi, err := os.Open(path)
+    if err != nil {
+        panic(err)
+    }
+    defer fi.Close()
+    buf := make([]byte, 1024)
+    for {
+        n, err := fi.Read(buf)
+        if err != nil &amp;&amp; err != io.EOF {
+            panic(err)
+        }
+        if 0 == n {
+            break
+        }
+        fmt.Println(string(buf[:n]))
+    }
+}
+
+//bufio包
+func read2(path string) {
+    fi, err := os.Open(path)
+    if err != nil {
+        panic(err)
+    }
+    defer fi.Close()
+    r := bufio.NewReader(fi)
+    buf := make([]byte, 1024)
+    for {
+        n, err := r.Read(buf)
+        if err != nil &amp;&amp; err != io.EOF {
+            panic(err)
+        }
+        if 0 == n {
+            break
+        }
+
+        fmt.Println(string(buf[:n]))
+    }
+}
+
+//ioutil包
+func read4(path string) {
+    r, err := ioutil.ReadFile(path)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(r)
+}
+
+//or
+func read3(path string) {
+    fi, err := os.Open(path)
+    if err != nil {
+        panic(err)
+    }
+    defer fi.Close()
+    _, err = ioutil.ReadAll(fi)
+}
+
+
+</code></pre>
+
+<h1 id="os包详细用法">OS包详细用法</h1>
+
+<h2 id="目录处理">目录处理</h2>
+
+<p>func Mkdir(name string, perm FileMode) error
+创建名称为name的目录，权限设置是perm，例如0777</p>
+
+<p>func MkdirAll(path string, perm FileMode) error
+根据path创建多级子目录，例如astaxie_test1_test2。</p>
+
+<p>func Remove(name string) error
+删除名称为name的目录，当目录下有文件或者其他目录时会出错</p>
+
+<p>func RemoveAll(path string) error
+根据path删除多级子目录，如果path是单个名称，那么该目录下的子目录全部删除。</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    os.Mkdir(&quot;tmac&quot;, 0777)
+    os.MkdirAll(&quot;tmac/test1/test2&quot;, 0777)
+    err := os.Remove(&quot;tmac&quot;)
+    if err != nil {
+        fmt.Println(err)
+    }
+    os.RemoveAll(&quot;tmac&quot;)
+}
+</code></pre>
+
+<h2 id="文件创建">文件创建</h2>
+
+<p>新建文件可以通过如下两个方法</p>
+
+<p>func Create(name string) (file *File, err Error)
+根据提供的文件名创建新的文件，返回一个文件对象，默认权限是0666的文件，返回的文件对象是可读写的。</p>
+
+<p>func NewFile(fd uintptr, name string) *File
+根据文件描述符创建相应的文件，返回一个文件对象</p>
+
+<p>通过如下两个方法来打开文件：</p>
+
+<p>func Open(name string) (file *File, err Error)
+该方法打开一个名称为name的文件，但是是只读方式，内部实现其实调用了OpenFile。</p>
+
+<p>func OpenFile(name string, flag int, perm uint32) (file *File, err Error)
+打开名称为name的文件，flag是打开的方式，只读、读写等，perm是权限</p>
+
+<h2 id="写文件">写文件</h2>
+
+<p>func (file *File) Write(b []byte) (n int, err Error)
+写入byte类型的信息到文件</p>
+
+<p>func (file *File) WriteAt(b []byte, off int64) (n int, err Error)
+在指定位置开始写入byte类型的信息</p>
+
+<p>func (file *File) WriteString(s string) (ret int, err Error)
+写入string信息到文件</p>
+
+<h2 id="读文件">读文件</h2>
+
+<p>func (file *File) Read(b []byte) (n int, err Error)
+读取数据到b中</p>
+
+<p>func (file *File) ReadAt(b []byte, off int64) (n int, err Error)
+从off开始读取数据到b中</p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    userFile := &quot;tmac.txt&quot;
+    fl, err := os.Open(userFile)        
+    if err != nil {
+        fmt.Println(userFile, err)
+        return
+    }
+    defer fl.Close()
+    buf := make([]byte, 1024)
+    for {
+        n, _ := fl.Read(buf)
+        if 0 == n {
+            break
+        }
+        os.Stdout.Write(buf[:n])
+    }
+}
+</code></pre>
+
+<h2 id="删除文件">删除文件</h2>
+
+<p>func Remove(name string) Error
+调用该函数就可以删除文件名为name的文件</p>
+
+<h1 id="ioutil包详细用法">ioutil包详细用法</h1>
+
+<p>包名 ”io/ioutil“</p>
+
+<p>func ReadAll(r io.Reader) ([]byte, error)</p>
+
+<p>读取 r 中所有数据并返回</p>
+
+<pre><code class="language-go">func main() {
+    s := strings.NewReader(&quot;Hello World!&quot;)
+    ra, _ := ioutil.ReadAll(s)
+    fmt.Printf(&quot;%s&quot;, ra)
+}
+</code></pre>
+
+<p>func ReadFile(filename string) ([]byte, error)</p>
+
+<p>直接读取文件</p>
+
+<pre><code class="language-go">func main() {
+    ra, _ := ioutil.ReadFile(&quot;file path&quot;)
+    fmt.Printf(&quot;%s&quot;, ra)
+}
+</code></pre>
+
+<p>func WriteFile(filename string, data []byte, perm os.FileMode) error</p>
+
+<p>WriteFile 向文件 filename 中写入数据 data</p>
+
+<p>如果文件不存在，则以 perm 权限创建该文件</p>
+
+<p>如果文件存在，os.FileMode 不同使用不同的规则</p>
+
+<pre><code class="language-go">func main() {
+    fn := &quot;file path&quot;&quot;
+    s := []byte(&quot;Hello World!&quot;)
+    ioutil.WriteFile(fn, s, os.ModeAppend)
+    rf, _ := ioutil.ReadFile(fn)
+    fmt.Printf(&quot;%s&quot;, rf)
+}
+</code></pre>
+
+<p>func ReadDir(dirname string) ([]os.FileInfo, error)</p>
+
+<p>ReadDir 读取目录 dirmane 中的所有目录和文件（不包括子目录）</p>
+
+<p>返回读取到的文件的信息列表和读取过程中遇到的任何错误</p>
+
+<p>返回的文件列表是经过排序的</p>
+
+<pre><code class="language-go">func main() {
+    rd, err := ioutil.ReadDir(&quot;file path&quot;)
+    for _, fi := range rd {
+        fmt.Println(&quot;&quot;)
+        fmt.Println(fi.Name())
+        fmt.Println(fi.IsDir())
+        fmt.Println(fi.Size())
+        fmt.Println(fi.ModTime())
+        fmt.Println(fi.Mode())
+    }
+    fmt.Println(&quot;&quot;)
+    fmt.Println(err)
+}
+</code></pre>
+
+<h1 id="bufio包详细用法">bufio包详细用法</h1>
+
+<p><a href="https://blog.csdn.net/chenbaoke/article/details/40317721">参见这篇博文</a></p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+  			</div>
+
+        
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    <div class="footer__inner">
+        
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+
+        </div>
+    </div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>Powered by <a href="https://github.com/golang">GOLANG</a></span>
+            <span>&copy; 2019</span>
+            <span> <a
+                href="/posts/index.xml" target="_blank" title="rss"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-rss">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg></a></span>
+            <span>Made by <a href="https://github.com/tmac33">COSMO</a></span>
+        </div>
+    </div>
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+
+<script type="text/javascript" src="/bundle.min.cf7871ed49474a80ed457154d24e61f7881adbe0f9384951a74ac46b688a39a4dbfa68bc6d37baeb058186de354ead3487d4ee7f083ea4cba860c48600b694f3.js" integrity="sha512-z3hx7UlHSoDtRXFU0k5h94ga2&#43;D5OElRp0rEa2iKOaTb&#43;mi8bTe66wWBht41Tq00h9Tufwg&#43;pMuoYMSGALaU8w=="></script>
+
+
+
+    </body>
+</html>
