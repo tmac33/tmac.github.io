@@ -6,10 +6,21 @@
     <description>Recent content on Code and Things</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>python中的abc module</title>
+      <link>/blog/abc/</link>
+      <pubDate>Sat, 18 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/abc/</guid>
+      <description>为什么使用abstract base classes? 抽象基类是一种比hasattr()检查特定方法更严格的接口检查形式。通过定义抽象基类，就可以为一组字类建立公共API。
+How ABCs Work? abc将基础类方法标记为抽象，然后将具体类注册为抽象类的实现。
+# abc_base.py import abc class PluginBase(metaclass=abc.ABCMeta): @abc.abstractmethod def load(self, input): &amp;quot;&amp;quot;&amp;quot;Retrieve data from the input source and return an object. &amp;quot;&amp;quot;&amp;quot; @abc.abstractmethod def save(self, output, data): &amp;quot;&amp;quot;&amp;quot;Save the data object to the output.&amp;quot;&amp;quot;&amp;quot;  注册一个具体的类 # abc_register.py import abc from abc_base import PluginBase class LocalBaseClass: pass @PluginBase.register class RegisteredImplementation(LocalBaseClass): def load(self, input): return input.read() def save(self, output, data): return output.write(data) if __name__ == &#39;__main__&#39;: print(&#39;Subclass:&#39;, issubclass(RegisteredImplementation, PluginBase)) print(&#39;Instance:&#39;, isinstance(RegisteredImplementation(), PluginBase))  $ python3 abc_register.</description>
+    </item>
     
     <item>
       <title>原本的新起点</title>
