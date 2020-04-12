@@ -6,10 +6,42 @@
     <description>Recent content on Code and Things</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 10 Apr 2020 22:25:24 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Lifetimes in Rust</title>
+      <link>/blog/understandlifetime/</link>
+      <pubDate>Fri, 10 Apr 2020 22:25:24 +0000</pubDate>
+      
+      <guid>/blog/understandlifetime/</guid>
+      <description>Background 高级语言很方便地处理我们代码中的每个对象的存活的范围(scope), 我们不需要理解这些对象的生命周期。Rust同样为我们管理着生命周期，我们可以通过所有权(ownership)和借用(borrowing)对简单情况进行更多的控制,但是对于复杂的情况，我们需要在代码中给出识别标识，以便编译器能够理解更大的生命周期的范围。
+简单来说，一切的一切归根揭底就是为了在对象使用完之后释放它。
+高级语言如Go、Ruby、Python等等，使用垃圾回收器在整个代码中扫描和标记对象，以查看它们是否准备好从内存中释放掉，并将对所有已标记可释放的对象执行释放操作。当你不再使用对象时，低级语言如C、汇编要求你手工释放它们。
+Rust避免了垃圾回收和手写代码释放内存的成本，它根据代码库中每个对象的生命周期维护释放内存的时间。生存期主要由所有权系统决定（描述代码的哪个部分负责拥有内存中对象的系统），以及在复杂情况下，由帮助编译器而提供的手动生命周期描述符来决定。一旦对象的生命周期束，内存将立即释放。
+Simple Lifetimes  const   生命周期是整个程序，它的值可以内联到代码中的任何地方。 - static
+生命周期也是整个程序，但它不会被内联，它存在于内存的固定位置。
+大多数其他对象的生命周期只发生在块(block)的范围内，或者直到某个方法调用夺走了它们的所有权。如果一个对象要在方法调用中超出其使用范围而存在(意思是方法调用完还继续存活)，那么该方法需要借用(borrow)它，或者复制(copy)它，以便在方法完成后，它的生命周期可以在外部作用域中继续长存。
+Complex Lifetimes 有时候，当代码中没有足够的信息来确定生命周期时，Rust编译器会要求描述/注释生命周期。</description>
+    </item>
+    
+    <item>
+      <title>Implement a web server with python</title>
+      <link>/blog/web_server/</link>
+      <pubDate>Sun, 16 Feb 2020 22:25:24 +0000</pubDate>
+      
+      <guid>/blog/web_server/</guid>
+      <description>背景 差不多每一个web上的程序是运行在一个叫做IP的家族通讯协议之上的。其中TCP/IP协议使电脑之间的通讯变得像读取文件一般简单。
+程序通过sockets实现使用IP通讯。
+HTTP的两点特质必须要了解的： - stateless 服务器记不住一个请求与下一个请求，至于用户身份的识别，请求必须每次自己携带。 - A URL can be supplemented with parameters to provide even more information.
+Hello,web 现在开始创建我们的第一个Web server。
+ 等待客户端连接发送请求 解析请求 弄明白请求什么 获取或生成数据 格式化成HTML 返回数据  面向对象 对象的抽象就是类，而对象的集合就是容器 list:[0,1,2] tuple:(0,1,2) dict:{0:0,1:1,2：2} set:set([0,1,2])
+所有的容器都是可迭代的（iterator）。这里的迭代与枚举不同，迭代可以想象成是你去买苹果，卖家并不告诉你他有多少库存。这样，每次你都需要告诉卖家，你要一个苹果，然后卖家采取行为：要么给你拿一个苹果；要么告诉你，苹果已经卖完了。你并不需要知道，卖家在仓库是怎么摆放苹果的。
+严谨地说，迭代器（iterator）提供了一个 next 的方法。调用这个方法后，你要么得到这个容器的下一个对象，要么得到一个 StopIteration 的错误（苹果卖完了）。你不需要像列表一样指定元素的索引，因为字典和集合这样的容器并没有索引一说。比如，字典采用哈希表实现，那么你就只需要知道，next 函数可以不重复不遗漏地一个一个拿到所有元素即可。
+生成器又是什么？ 这里，你只需要记着一点：生成器是懒人版本的迭代器。</description>
+    </item>
     
     <item>
       <title>python中的abc module</title>

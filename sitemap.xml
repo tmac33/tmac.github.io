@@ -4,14 +4,24 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2020-01-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-04-10T22:25:24+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-01-18T00:00:00+00:00</lastmod>
+    <lastmod>2020-04-10T22:25:24+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/blog/understandlifetime/</loc>
+    <lastmod>2020-04-10T22:25:24+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/web_server/</loc>
+    <lastmod>2020-02-16T22:25:24+00:00</lastmod>
   </url>
   
   <url>
