@@ -4,14 +4,19 @@
   
   <url>
     <loc>/blog/</loc>
-    <lastmod>2020-04-10T22:25:24+00:00</lastmod>
+    <lastmod>2020-04-14T22:25:24+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-04-10T22:25:24+00:00</lastmod>
+    <lastmod>2020-04-14T22:25:24+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/blog/stringstr/</loc>
+    <lastmod>2020-04-14T22:25:24+00:00</lastmod>
   </url>
   
   <url>

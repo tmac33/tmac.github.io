@@ -6,10 +6,23 @@
     <description>Recent content on Code and Things</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 10 Apr 2020 22:25:24 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Apr 2020 22:25:24 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>String与str Rust</title>
+      <link>/blog/stringstr/</link>
+      <pubDate>Tue, 14 Apr 2020 22:25:24 +0000</pubDate>
+      
+      <guid>/blog/stringstr/</guid>
+      <description>String是一种动态的heap字符串类型类似于Vec，当你想要更改或创造字符串数据的时候就可以使用它。
+str是内存中某个位置的一个动态长度UTF-8编码的不可变序列。因为大小未知，所以只可以通过指针操作。也就是说大多数情况下以&amp;amp;str出现。实际也就是一种UTF-8数据的引用，称作字符串切片或切片。
+字符串切片可以看作一些数据的视图，这些数据可以出现在任何地方，比如，
+ 静态存储 栈中 堆中  总的来说，如果需要创建字符串数据，可以使用String(比如将字符串传递给其他线程，或者在运行时构建它们)，如果只需要字符串的视图，可以使用&amp;amp;str。
+这与Vec和&amp;amp;[T]之间的关系是相同的，并且与一般类型的T和&amp;amp;T之间的关系是相似的。</description>
+    </item>
     
     <item>
       <title>Lifetimes in Rust</title>
