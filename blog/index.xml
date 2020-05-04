@@ -419,6 +419,20 @@ R树索引 暴力遍历法效率低下的原因是与每一个多边形都进行
     </item>
     
     <item>
+      <title>golang面向对象分析</title>
+      <link>/blog/go_oop/</link>
+      <pubDate>Mon, 24 Jul 2017 01:51:37 +0000</pubDate>
+      
+      <guid>/blog/go_oop/</guid>
+      <description>说道面向对象(OOP)编程, 就不得不提到下面几个概念:
+ 抽象 封装 继承 多态  其实有个问题Is Go An Object Oriented Language?, 随便谷歌了一下, 你就发现讨论这个的文章有很多: 1. reddit 2. google group
+那么问题来了 1. Golang是OOP吗? 2. 使用Golang如何实现OOP?
+我入门教程基本就是A Tour Of Go以及Go Web 编程. 由于之前是写C++, 但是说到Go面向对象编程, 总是感觉怪怪的, 总感觉缺少点什么. 我搜集了一些资料和例子, 加上我的一些理解, 整理出这样一篇文章.
+一. 抽象和封装 抽象和封装就放在一块说了. 这个其实挺简单. 看一个例子就行了.
+type rect struct { width int height int } func (r *rect) area() int { return r.width * r.height } func main() { r := rect{width: 10, height: 5} fmt.</description>
+    </item>
+    
+    <item>
       <title>In The End R.I.P</title>
       <link>/blog/rip/</link>
       <pubDate>Fri, 21 Jul 2017 12:25:24 +0000</pubDate>
